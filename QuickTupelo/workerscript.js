@@ -75,6 +75,7 @@ function pollEvents() {
     ajax({uri: "/ajax/get_events", data: {akey: ME.akey},
         success: function (response) {
              console.log("got events");
+             WorkerScript.sendMessage({action: "pollEvents", success: true, response: response});
          }});
 }
 
@@ -92,6 +93,13 @@ function quickStart() {
 
 }
 
+function getGameState() {
+    ajax({uri: "/ajax/game/get_state", data: {akey: ME.akey, game_id: ME.gameId},
+         success: function (response) {
+             WorkerScript.sendMessage({action: "getGameState", success: true, response: response});
+         }});
+}
+
 WorkerScript.onMessage = function (message) {
     console.log("onMessage");
     console.log(JSON.stringify(message));
@@ -107,6 +115,9 @@ WorkerScript.onMessage = function (message) {
         break;
     case "pollEvents":
         pollEvents();
+        break;
+    case "getGameState":
+        getGameState();
         break;
     default:
         break;

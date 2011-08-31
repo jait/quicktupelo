@@ -1,10 +1,19 @@
 import QtQuick 1.0
 
 Rectangle {
-    width: 360
+    width: 480
     height: 360
     color: "#edecec"
     id: mainRect
+
+    function updateHand(newHand) {
+        myHand.model.clear();
+        var i = 0;
+        for (i = 0; i < newHand.length; i++) {
+            myHand.model.append({"csuit": newHand[i].suit,
+                                "cvalue": newHand[i].value});
+        }
+    }
 
     function handleMessage(message) {
         console.log("handling message");
@@ -23,20 +32,54 @@ Rectangle {
                 console.log("Quit failed!");
             }
             mainRect.state = "";
+            myHand.model.clear();
             eventTimer.running = false;
             break;
         case "startGame":
         case "startGameWithBots":
             if (! message.success) {
                 console.log("startGame failed!");
-            } else {
-                mainRect.state = "IN_GAME";
+                break;
             }
+            mainRect.state = "IN_GAME";
+            myWorker.sendMessage({action: "getGameState"});
+            break;
+        case "pollEvents":
+            if (! message.success) {
+                console.log("pollEvents failed!");
+                break;
+            }
+            console.log(JSON.stringify(message.response));
+            // TODO: add events to queue
+            break;
+        case "getGameState":
+            if (! message.success) {
+                console.log("getGameState failed!");
+
+                break;
+            }
+            if (message.response.hand !== undefined) {
+                updateHand(message.response.hand);
+            }
+            // TODO: update state
             break;
         default:
             console.log("Unsupported action " + message.action);
             break;
         }
+    }
+
+    function createCard(parent, suit, value) {
+        var component = Qt.createComponent("Card.qml");
+        var card = component.createObject(parent);
+        if (card === null) {
+            console.log("Error creating object");
+            return undefined;
+        }
+
+        card.suit = suit;
+        card.value = value;
+        return card;
     }
 
     WorkerScript {
@@ -61,8 +104,7 @@ Rectangle {
         id: column1
         x: 0
         y: 0
-        width: 360
-        height: 360
+        anchors.fill: parent
         spacing: 10
         Row {
             id: loginRow
@@ -128,9 +170,15 @@ Rectangle {
         }
 
         Rectangle {
+            id: gameArea
             width: parent.width
             height: 260
             color: mainRect.color
+            Hand {
+                id: myHand
+                anchors.fill: parent
+                color:  parent.color
+            }
         }
 
     }
