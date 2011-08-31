@@ -1,74 +1,13 @@
 import QtQuick 1.0
+import "game.js" as Game
 
 Rectangle {
-    width: 480
-    height: 360
+    width: 640
+    height: 480
     color: "#edecec"
     id: mainRect
 
-    function updateHand(newHand) {
-        myHand.model.clear();
-        var i = 0;
-        for (i = 0; i < newHand.length; i++) {
-            myHand.model.append({"csuit": newHand[i].suit,
-                                "cvalue": newHand[i].value});
-        }
-    }
-
-    function handleMessage(message) {
-        console.log("handling message");
-        switch (message.action) {
-        case "register":
-            if (message.success) {
-                mainRect.state = "REGISTERED";
-                // go play straight away
-                myWorker.sendMessage({action: "quickStart"});
-            } else {
-                console.log("Register failed!");
-            }
-            break;
-        case "quit":
-            if (! message.success) {
-                console.log("Quit failed!");
-            }
-            mainRect.state = "";
-            myHand.model.clear();
-            eventTimer.running = false;
-            break;
-        case "startGame":
-        case "startGameWithBots":
-            if (! message.success) {
-                console.log("startGame failed!");
-                break;
-            }
-            mainRect.state = "IN_GAME";
-            myWorker.sendMessage({action: "getGameState"});
-            break;
-        case "pollEvents":
-            if (! message.success) {
-                console.log("pollEvents failed!");
-                break;
-            }
-            console.log(JSON.stringify(message.response));
-            // TODO: add events to queue
-            break;
-        case "getGameState":
-            if (! message.success) {
-                console.log("getGameState failed!");
-
-                break;
-            }
-            if (message.response.hand !== undefined) {
-                updateHand(message.response.hand);
-            }
-            // TODO: update state
-            break;
-        default:
-            console.log("Unsupported action " + message.action);
-            break;
-        }
-    }
-
+    /*
     function createCard(parent, suit, value) {
         var component = Qt.createComponent("Card.qml");
         var card = component.createObject(parent);
@@ -81,6 +20,7 @@ Rectangle {
         card.value = value;
         return card;
     }
+    */
 
     WorkerScript {
         id: myWorker
@@ -88,7 +28,7 @@ Rectangle {
 
         onMessage: {
             console.log("received something from worker");
-            handleMessage(messageObject);
+            Game.handleMessage(messageObject);
         }
     }
 
@@ -139,6 +79,7 @@ Rectangle {
                     cursorVisible: true
                     font.family: "Lucida Grande"
                     font.pixelSize: 12
+                    onFocusChanged: { if (focus) { text = "" } }
                 }
             }
             Button {
@@ -172,12 +113,48 @@ Rectangle {
         Rectangle {
             id: gameArea
             width: parent.width
-            height: 260
+            height: parent.height - 100
             color: mainRect.color
-            Hand {
-                id: myHand
-                anchors.fill: parent
-                color:  parent.color
+            Column {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+                Grid {
+                    id: table
+                    columns: 3
+                    spacing: 5
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    Rectangle { color: gameArea.color; width: 1; height: 1 }
+                    Rectangle { color: gameArea.color; id: table_2; width: 50; height: 50;
+                        Column {
+                            Text { id: playerName2 }
+                        }
+                    }
+                    Rectangle { color: gameArea.color; width: 1; height: 1 }
+                    Rectangle { color: gameArea.color; id: table_1; width: 50; height: 50;
+                        Row {
+                            Text { id: playerName1 }
+                        }
+                    }
+                    Rectangle { color: gameArea.color; width: 1; height: 1 }
+                    Rectangle { color: gameArea.color; id: table_3; width: 50; height: 50;
+                        Row {
+                            Text { id: playerName3 }
+                        }
+                    }
+                    Rectangle { color: gameArea.color; width: 1; height: 1 }
+                    Rectangle { color: gameArea.color; id: table_0; width: 50; height: 50;
+                        Column {
+                            Text { id: playerName0 }
+                        }
+                    }
+                    Rectangle { color: gameArea.color; width: 1; height: 1 }
+                }
+                Hand {
+                    id: myHand
+                    //width: parent.width
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: gameArea.color
+                }
             }
         }
 

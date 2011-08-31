@@ -1,7 +1,8 @@
 import QtQuick 1.0
 
 Rectangle {
-    width: 360
+    width: 480
+    height: 50
     property alias model: handView.model
 
     ListModel {

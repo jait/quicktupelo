@@ -1,4 +1,4 @@
-var CONFIG = {server: "http://tupelo.tenhunen.iki.fi"};
+var CONFIG = {server: "http://localhost"};
 var ME = {id: undefined, akey: undefined};
 
 function ajax(params) {
@@ -100,6 +100,13 @@ function getGameState() {
          }});
 }
 
+function getGameInfo() {
+    ajax({uri: "/ajax/game/get_info", data: {game_id: ME.gameId},
+         success: function (response) {
+             WorkerScript.sendMessage({action: "getGameInfo", success: true, response: response, state:ME});
+         }});
+}
+
 WorkerScript.onMessage = function (message) {
     console.log("onMessage");
     console.log(JSON.stringify(message));
@@ -118,6 +125,9 @@ WorkerScript.onMessage = function (message) {
         break;
     case "getGameState":
         getGameState();
+        break;
+    case "getGameInfo":
+        getGameInfo();
         break;
     default:
         break;
