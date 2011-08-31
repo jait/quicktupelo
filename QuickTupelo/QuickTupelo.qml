@@ -85,7 +85,6 @@ Rectangle {
             Button {
                 height: 25
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: nameInputItem.right
                 text: "Sign on"
                 onClicked: myWorker.sendMessage({action: "register", playerName: nameInput.text})
                 // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
@@ -96,6 +95,7 @@ Rectangle {
             visible: false
             anchors.horizontalCenter: parent.horizontalCenter
             height: 50
+            spacing: 10
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 id: loggedLabel
