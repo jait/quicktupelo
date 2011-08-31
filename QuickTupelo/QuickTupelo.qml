@@ -65,7 +65,7 @@ Rectangle {
                 id: nameInputItem
                 width: 80
                 height: 25
-                color: "#ffffff"
+                color: "white"
                 border.color: "black"
 
                 TextInput {
@@ -110,54 +110,10 @@ Rectangle {
             }
         }
 
-        Rectangle {
+        GameArea {
             id: gameArea
-            width: parent.width
-            height: parent.height - 100
             color: mainRect.color
-            Column {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 10
-                Grid {
-                    id: table
-                    columns: 3
-                    spacing: 5
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    Rectangle { color: gameArea.color; width: 1; height: 1 }
-                    Rectangle { color: gameArea.color; id: table_2; width: 50; height: 50;
-                        Column {
-                            Text { id: playerName2 }
-                        }
-                    }
-                    Rectangle { color: gameArea.color; width: 1; height: 1 }
-                    Rectangle { color: gameArea.color; id: table_1; width: 50; height: 50;
-                        Row {
-                            Text { id: playerName1 }
-                        }
-                    }
-                    Rectangle { color: gameArea.color; width: 1; height: 1 }
-                    Rectangle { color: gameArea.color; id: table_3; width: 50; height: 50;
-                        Row {
-                            Text { id: playerName3 }
-                        }
-                    }
-                    Rectangle { color: gameArea.color; width: 1; height: 1 }
-                    Rectangle { color: gameArea.color; id: table_0; width: 50; height: 50;
-                        Column {
-                            Text { id: playerName0 }
-                        }
-                    }
-                    Rectangle { color: gameArea.color; width: 1; height: 1 }
-                }
-                Hand {
-                    id: myHand
-                    //width: parent.width
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: gameArea.color
-                }
-            }
         }
-
     }
     states: [
         State {

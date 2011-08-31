@@ -1,15 +1,27 @@
 function updateHand(newHand) {
-    myHand.model.clear();
+    gameArea.handModel.clear();
     var i = 0;
     for (i = 0; i < newHand.length; i++) {
-        myHand.model.append({"csuit": newHand[i].suit,
+        gameArea.handModel.append({"csuit": newHand[i].suit,
                             "cvalue": newHand[i].value});
     }
 }
 
+function getPlayerElemByIndex(index) {
+    // TODO: there must be an easier way to do this
+    var i, plr;
+    for (i = 0; i < gameArea.players.length; i++) {
+        plr = gameArea.players[i];
+        if (plr.index === index) {
+            return plr;
+        }
+    }
+    return undefined;
+}
+
 function onGameInfo(result, state) {
     console.log(JSON.stringify(result));
-    var i, myIndex, pl, index;
+    var i, myIndex, pl, index, elem;
     for (i = 0; i < result.length; i++) {
         if (result[i].id == state.id) {
             myIndex = i;
@@ -21,9 +33,13 @@ function onGameInfo(result, state) {
         // place where the player goes when /me is always at the bottom
         index = (4 + i - myIndex) % 4;
         // TODO: set player id and name
-        // comp = "playerName" + index;
-        // comp.playerId = pl.id
-        // comp.text = pl.player_name;
+        elem = getPlayerElemByIndex(index);
+        if (elem === undefined) {
+            console.log("Umm... could not get elem");
+            continue;
+        }
+        elem.name = pl.player_name;
+        elem.playerId = pl.id;
     }
 }
 
@@ -45,7 +61,7 @@ function handleMessage(message) {
             console.log("Quit failed!");
         }
         mainRect.state = "";
-        myHand.model.clear();
+        gameArea.handModel.clear();
         eventTimer.running = false;
         break;
     case "startGame":
