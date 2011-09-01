@@ -169,8 +169,11 @@ function handleMessage(message) {
             console.log("Quit failed!");
         }
         mainRect.state = "";
+        // TODO: wrap these behind a state change
         gameArea.handModel.clear();
-        eventFetchTimer.running = false;
+        gameArea.clearTable();
+        eventFetchTimer.stop();
+        tableClearTimer.stop();
         break;
     case "startGame":
     case "startGameWithBots":
