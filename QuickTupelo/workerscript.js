@@ -107,6 +107,13 @@ function getGameInfo() {
          }});
 }
 
+function playCard(card) {
+    ajax({uri: "/ajax/game/play_card", data: {akey: ME.akey, game_id: ME.gameId, card: JSON.stringify(card)},
+         success: function (response) {
+             WorkerScript.sendMessage({action: "playCard", success: true, response: response});
+         }});
+}
+
 WorkerScript.onMessage = function (message) {
     console.log("onMessage");
     console.log(JSON.stringify(message));
@@ -128,6 +135,9 @@ WorkerScript.onMessage = function (message) {
         break;
     case "getGameInfo":
         getGameInfo();
+        break;
+    case "playCard":
+        playCard(message.card);
         break;
     default:
         break;

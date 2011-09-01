@@ -4,6 +4,8 @@ Rectangle {
     width: 480
     height: 50
     property alias model: handView.model
+    signal cardClicked(variant card)
+    id: handRect
 
     ListModel {
         id: handModel
@@ -28,7 +30,11 @@ Rectangle {
         Item {
             id: delegateItem
             width: 30
-            Card { suit: csuit; value: cvalue }
+            Card {
+                id: delegateCard
+                suit: csuit; value: cvalue
+                onClicked: handRect.cardClicked(delegateCard)
+            }
         }
     }
 

@@ -7,21 +7,6 @@ Rectangle {
     color: "#edecec"
     id: mainRect
 
-    /*
-    function createCard(parent, suit, value) {
-        var component = Qt.createComponent("Card.qml");
-        var card = component.createObject(parent);
-        if (card === null) {
-            console.log("Error creating object");
-            return undefined;
-        }
-
-        card.suit = suit;
-        card.value = value;
-        return card;
-    }
-    */
-
     WorkerScript {
         id: myWorker
         source: "workerscript.js"
@@ -33,10 +18,20 @@ Rectangle {
     }
 
     Timer {
-        id: eventTimer
+        id: eventFetchTimer
         interval: 2000; running: false; repeat: true
         onTriggered: {
             myWorker.sendMessage({action: "pollEvents"});
+        }
+    }
+
+    Timer {
+        id: eventProcessTimer
+        interval: 100; running: false; repeat: true
+        onTriggered: {
+            if (! Game.processEvent()) {
+                eventProcessTimer.stop()
+            }
         }
     }
 
@@ -111,8 +106,10 @@ Rectangle {
         }
 
         GameArea {
+            visible: false
             id: gameArea
             color: mainRect.color
+            Component.onCompleted: cardClicked.connect(Game.onCardClicked)
         }
     }
     states: [
@@ -139,7 +136,7 @@ Rectangle {
             name: "IN_GAME"
 
             PropertyChanges {
-                target: eventTimer
+                target: eventFetchTimer
                 running: true
             }
 
@@ -157,6 +154,11 @@ Rectangle {
                 target: loggedLabel
                 text: "Signed on as " + nameInput.text
                 opacity: 1
+            }
+
+            PropertyChanges {
+                target: gameArea
+                visible: true
             }
         }
     ]

@@ -6,7 +6,19 @@ Rectangle {
     height: parent.height - 100
     property alias handModel: myHand.model
     property alias players: table.children
+    signal cardClicked(variant card)
 
+    function clearTable() {
+        var i, card, j;
+        for (i = 0; i < players.length; i++) {
+            if (players[i].card !== undefined) {
+                card = players[i].card.children;
+                for (j = 0; j < card.length; j++) {
+                    card[j].destroy();
+                }
+            }
+        }
+    }
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 10
@@ -20,10 +32,12 @@ Rectangle {
                 property alias name: playerName2.text
                 property int index: 2
                 property string playerId
+                property alias card: card2
                 Column {
                     anchors.fill: parent
                     Text { id: playerName2; anchors.horizontalCenter: parent.horizontalCenter }
                     Rectangle {
+                        id: card2
                         color: gameAreaRect.color
                         width: 30; height: 50
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -35,10 +49,15 @@ Rectangle {
                 property int index: 1
                 property alias name: playerName1.text
                 property string playerId
+                property alias card: card1
                 Row {
                     anchors.fill: parent
+                    spacing: 5
                     Text { id: playerName1; anchors.verticalCenter: parent.verticalCenter }
-                    Rectangle { color: gameAreaRect.color; width: 30; height: 50;
+                    Rectangle {
+                        id: card1
+                        color: gameAreaRect.color
+                        width: 30; height: 50
                         anchors.verticalCenter: parent.verticalCenter
                     }
                 }
@@ -48,9 +67,16 @@ Rectangle {
                 property alias name: playerName3.text
                 property int index: 3
                 property string playerId
+                property alias card: card3
                 Row {
                     anchors.fill: parent
-                    Rectangle { color: gameAreaRect.color; width: 30; height: 50; anchors.verticalCenter: parent.verticalCenter }
+                    spacing: 5
+                    Rectangle {
+                        id: card3
+                        color: gameAreaRect.color
+                        width: 30; height: 50
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
                     Text { id: playerName3; anchors.verticalCenter: parent.verticalCenter }
                 }
             }
@@ -59,9 +85,11 @@ Rectangle {
                 property alias name: playerName0.text
                 property int index: 0
                 property string playerId
+                property alias card: card0
                 Column {
                     anchors.fill: parent
                     Rectangle {
+                        id: card0
                         color: gameAreaRect.color
                         width: 30; height: 50;
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -76,6 +104,7 @@ Rectangle {
             //width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
             color: gameAreaRect.color
+            Component.onCompleted: myHand.cardClicked.connect(gameAreaRect.cardClicked)
         }
     }
 }

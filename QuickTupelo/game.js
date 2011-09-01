@@ -1,3 +1,90 @@
+
+var EVENTS = [];
+
+function createCard(parent, suit, value) {
+    var component = Qt.createComponent("Card.qml");
+    var card = component.createObject(parent);
+    if (card === null) {
+        console.log("Error creating object");
+        return undefined;
+    }
+
+    card.suit = suit;
+    card.value = value;
+    return card;
+}
+
+function onCardPlayed(event) {
+    var plr;
+    plr = getPlayerElemById(event.player.id);
+    if (plr === undefined) {
+        console.log("Could not find player!");
+        return;
+    }
+    createCard(plr.card, event.card.suit, event.card.value);
+}
+
+function onMessageReceived(event) {
+
+}
+
+function onTrickPlayed(event) {
+    gameArea.clearTable();
+}
+
+function onTurnEvent(event) {
+
+}
+
+function onStateChanged(event) {
+
+}
+
+function onCardClicked(card) {
+    myWorker.sendMessage({"action": "playCard",
+                         "card": {"suit": card.suit, "value": card.value}});
+}
+
+function processEvent() {
+    var event;
+    if (EVENTS.length === 0) {
+        console.log("no events to process");
+        return;
+    }
+    event = EVENTS.shift();
+    console.log("processing " + event);
+
+    if (event.game_state !== undefined) {
+        //updateGameState(event.game_state);
+    }
+    switch (event.type) {
+        case 1:
+            onCardPlayed(event);
+            break;
+        case 2:
+            onMessageReceived(event);
+            break;
+        case 3:
+            onTrickPlayed(event);
+            break;
+        case 4:
+            onTurnEvent(event);
+            break;
+        case 5:
+            onStateChanged(event);
+            break;
+        default:
+            console.log("unknown event " + event.type);
+            break;
+    }
+
+    return (EVENTS.length > 0);
+}
+
+function queueEvent(event) {
+    EVENTS.push(event);
+}
+
 function updateHand(newHand) {
     gameArea.handModel.clear();
     var i = 0;
@@ -13,6 +100,18 @@ function getPlayerElemByIndex(index) {
     for (i = 0; i < gameArea.players.length; i++) {
         plr = gameArea.players[i];
         if (plr.index === index) {
+            return plr;
+        }
+    }
+    return undefined;
+}
+
+function getPlayerElemById(id) {
+    // TODO: there must be an easier way to do this
+    var i, plr;
+    for (i = 0; i < gameArea.players.length; i++) {
+        plr = gameArea.players[i];
+        if (plr.playerId === id) {
             return plr;
         }
     }
@@ -45,6 +144,7 @@ function onGameInfo(result, state) {
 
 
 function handleMessage(message) {
+    var i;
     console.log("handling message");
     switch (message.action) {
     case "register":
@@ -62,7 +162,7 @@ function handleMessage(message) {
         }
         mainRect.state = "";
         gameArea.handModel.clear();
-        eventTimer.running = false;
+        eventFetchTimer.running = false;
         break;
     case "startGame":
     case "startGameWithBots":
@@ -79,8 +179,15 @@ function handleMessage(message) {
             console.log("pollEvents failed!");
             break;
         }
-        console.log(JSON.stringify(message.response));
-        // TODO: add events to queue
+        //console.log(JSON.stringify(message.response));
+        // add events to queue
+        if (message.response.length > 0) {
+            for (i = 0; i < message.response.length; i++) {
+                queueEvent(message.response[i]);
+            }
+            // kick the timer if it's not running
+            eventProcessTimer.start();
+        }
         break;
     case "getGameState":
         if (! message.success) {
@@ -98,6 +205,13 @@ function handleMessage(message) {
             break;
         }
         onGameInfo(message.response, message.state);
+        break;
+    case "playCard":
+        if (! message.success) {
+            console.log("playCard failed!");
+            break;
+        }
+        myWorker.sendMessage({action: "getGameState"});
         break;
     default:
         console.log("Unsupported action " + message.action);

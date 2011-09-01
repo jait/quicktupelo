@@ -6,6 +6,7 @@ Rectangle {
     color: "white"
     property int suit
     property int value
+    signal clicked
 
     function suitToChar(suit) {
         var suits = [{name: "spades", char: "\u2660"},
@@ -47,5 +48,10 @@ Rectangle {
         anchors.centerIn: parent
         text: "" + suitToChar(parent.suit) + valueToChar(parent.value)
         color: (parent.suit % 2 === 0 ? "black" : "red")
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: parent.clicked()
     }
 }
