@@ -145,7 +145,7 @@ function onGameInfo(result, state) {
 
 function handleMessage(message) {
     var i;
-    console.log("handling message");
+    //console.log("handling message");
     switch (message.action) {
     case "register":
         if (message.success) {

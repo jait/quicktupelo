@@ -11,17 +11,14 @@ Rectangle {
         id: myWorker
         source: "workerscript.js"
 
-        onMessage: {
-            console.log("received something from worker");
-            Game.handleMessage(messageObject);
-        }
+        onMessage: { Game.handleMessage(messageObject) }
     }
 
     Timer {
         id: eventFetchTimer
         interval: 2000; running: false; repeat: true
         onTriggered: {
-            myWorker.sendMessage({action: "pollEvents"});
+            myWorker.sendMessage({action: "pollEvents"})
         }
     }
 

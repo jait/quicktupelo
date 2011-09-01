@@ -90,7 +90,6 @@ function startGameWithBots() {
 
 function quickStart() {
     createGame(startGameWithBots);
-
 }
 
 function getGameState() {
@@ -115,8 +114,7 @@ function playCard(card) {
 }
 
 WorkerScript.onMessage = function (message) {
-    console.log("onMessage");
-    console.log(JSON.stringify(message));
+    console.log("onMessage " + JSON.stringify(message));
     switch (message.action) {
     case "register":
         register(message.playerName);
