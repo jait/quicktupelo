@@ -14,6 +14,12 @@ function createCard(parent, suit, value) {
     return card;
 }
 
+function clearTable() {
+    // stop processing events and schedule for table clearing
+    eventProcessTimer.stop();
+    tableClearTimer.start();
+}
+
 function onCardPlayed(event) {
     var plr;
     plr = getPlayerElemById(event.player.id);
@@ -25,19 +31,21 @@ function onCardPlayed(event) {
 }
 
 function onMessageReceived(event) {
-
+    console.log(JSON.stringify(event));
 }
 
 function onTrickPlayed(event) {
-    gameArea.clearTable();
+    clearTable();
 }
 
 function onTurnEvent(event) {
-
+    // TODO: highlight the player in turn
 }
 
 function onStateChanged(event) {
-
+    if (event.game_state.state == 2) { // VOTING => ONGOING
+        clearTable();
+    }
 }
 
 function onCardClicked(card) {
@@ -186,7 +194,7 @@ function handleMessage(message) {
                 queueEvent(message.response[i]);
             }
             // kick the timer if it's not running
-            eventProcessTimer.start();
+            eventProcessTimer.maybeStart();
         }
         break;
     case "getGameState":

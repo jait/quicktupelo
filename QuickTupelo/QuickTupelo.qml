@@ -30,6 +30,19 @@ Rectangle {
                 eventProcessTimer.stop()
             }
         }
+        function maybeStart() {
+            if (! tableClearTimer.running) {
+                eventProcessTimer.start();
+            }
+        }
+    }
+    Timer {
+        id: tableClearTimer
+        interval: 5000; running: false; repeat: false
+        onTriggered: {
+            gameArea.clearTable()
+            eventProcessTimer.start()
+        }
     }
 
     Column {
@@ -107,6 +120,13 @@ Rectangle {
             id: gameArea
             color: mainRect.color
             Component.onCompleted: cardClicked.connect(Game.onCardClicked)
+            onTableClicked: {
+                if (tableClearTimer.running) {
+                    tableClearTimer.stop()
+                    gameArea.clearTable()
+                    eventProcessTimer.start()
+                }
+            }
         }
     }
     states: [
