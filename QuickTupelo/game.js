@@ -223,6 +223,7 @@ function handleMessage(message) {
             break;
         }
         myWorker.sendMessage({action: "getGameState"});
+        eventFetchTimer.triggerNow();
         break;
     default:
         console.log("Unsupported action " + message.action);

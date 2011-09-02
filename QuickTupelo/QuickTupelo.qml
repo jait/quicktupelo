@@ -20,6 +20,17 @@ Rectangle {
         onTriggered: {
             myWorker.sendMessage({action: "pollEvents"})
         }
+
+        function triggerNow() {
+            var wasRunning = eventFetchTimer.running;
+            if (wasRunning) {
+                eventFetchTimer.stop();
+            }
+            myWorker.sendMessage({action: "pollEvents"});
+            if (wasRunning) {
+                eventFetchTimer.start();
+            }
+        }
     }
 
     Timer {
