@@ -47,6 +47,7 @@ Rectangle {
             }
         }
     }
+
     Timer {
         id: tableClearTimer
         interval: 5000; running: false; repeat: false
@@ -112,12 +113,13 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             height: 50
             spacing: 10
+            property string name
+            onNameChanged: { loggedLabel.text = "Signed on as " + name }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 id: loggedLabel
                 text: "<none>"
                 font.pixelSize: 12
-                opacity: 0
             }
             Button {
                 anchors.verticalCenter: parent.verticalCenter
@@ -147,17 +149,12 @@ Rectangle {
             PropertyChanges {
                 target: statusRow
                 visible: true
+                name: nameInput.text
             }
 
             PropertyChanges {
                 target: loginRow
                 visible: false
-            }
-
-            PropertyChanges {
-                target: loggedLabel
-                text: "Signed on as " + nameInput.text
-                opacity: 1
             }
         },
         State {
@@ -171,17 +168,12 @@ Rectangle {
             PropertyChanges {
                 target: statusRow
                 visible: true
+                name: nameInput.text
             }
 
             PropertyChanges {
                 target: loginRow
                 visible: false
-            }
-
-            PropertyChanges {
-                target: loggedLabel
-                text: "Signed on as " + nameInput.text
-                opacity: 1
             }
 
             PropertyChanges {
