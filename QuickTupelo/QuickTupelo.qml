@@ -114,7 +114,13 @@ Rectangle {
             height: 50
             spacing: 10
             property string name
+            property alias gameState: gameStateText.text
             onNameChanged: { loggedLabel.text = "Signed on as " + name }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                id: gameStateText
+                font.pixelSize: 12
+            }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
                 id: loggedLabel
@@ -150,6 +156,7 @@ Rectangle {
                 target: statusRow
                 visible: true
                 name: nameInput.text
+                gameState: ""
             }
 
             PropertyChanges {

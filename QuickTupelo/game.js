@@ -15,7 +15,7 @@ function createCard(parent, suit, value) {
 }
 
 function clearTable() {
-    // stop processing events and schedule for table clearing
+    // stop processing events and schedule timer for table clearing
     eventProcessTimer.stop();
     tableClearTimer.start();
 }
@@ -43,8 +43,16 @@ function onTurnEvent(event) {
 }
 
 function onStateChanged(event) {
-    if (event.game_state.state == 2) { // VOTING => ONGOING
+    var stateStr = undefined;
+    if (event.game_state.state == 1) {
+        stateStr = "Voting";
+    } else if (event.game_state.state == 2) { // VOTING => ONGOING
         clearTable();
+        stateStr = event.game_state.mode == 0 ? "Playing NOLO": "Playing RAMI";
+    }
+    if (stateStr) {
+        console.log(stateStr);
+        statusRow.gameState = stateStr;
     }
 }
 
@@ -138,7 +146,7 @@ function onGameInfo(result, state) {
     for (i = 0; i < result.length; i++) {
         pl = result[i];
         // place where the player goes when /me is always at the bottom
-        index = (4 + i - myIndex) % 4;
+        index = (i - myIndex) % 4;
         // TODO: set player id and name
         elem = getPlayerElemByIndex(index);
         if (elem === undefined) {
@@ -174,6 +182,7 @@ function handleMessage(message) {
         gameArea.clearTable();
         eventFetchTimer.stop();
         tableClearTimer.stop();
+        statusRow.gameState = "";
         break;
     case "startGame":
     case "startGameWithBots":
