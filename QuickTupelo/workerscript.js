@@ -19,13 +19,38 @@ function ajax(params) {
 
     var doc = new XMLHttpRequest();
     doc.onreadystatechange = function () {
+        var json = undefined;
         if (doc.readyState == XMLHttpRequest.HEADERS_RECEIVED) {
             console.log("HEADERS_RECEIVED");
         } else if (doc.readyState == XMLHttpRequest.DONE) {
-            console.log("DONE");
+            console.log("DONE " + doc.status);
             console.log(doc.responseText);
-            if (params.success !== undefined) {
-                params.success(eval("(" + doc.responseText + ")"));
+            if (doc.status == 200) {
+                json = eval("(" + doc.responseText + ")");
+                if (params.success !== undefined) {
+                    params.success(json);
+                }
+                else {
+                    // default
+                    WorkerScript.sendMessage({action: params.action, success: true, response: json});
+                }
+            } else {
+                if (doc.status == 403) {
+                    try {
+                        json = eval("(" + doc.responseText + ")");
+                    } catch (err) {
+                        // console.log("failed to parse response: " + doc.responseText);
+                        // try to dig the stuff from headers instead
+                        json = {"code": doc.getResponseHeader("X-Error-Code"),
+                                "message": doc.getResponseHeader("X-Error-Message")};
+                    }
+                }
+                if (params.error !== undefined) {
+                    params.error(doc, json);
+                } else {
+                    // default error handler
+                    WorkerScript.sendMessage({action: params.action, success: false, response: json});
+                }
             }
         }
     }
@@ -39,7 +64,8 @@ function register(playerName) {
     console.log("registering " + playerName);
     var player = {player_name: playerName};
     ajax({uri: "/ajax/player/register", data: {player: JSON.stringify(player)},
-        success: function (response) {
+         action: "register",
+         success: function (response) {
              ME.id = response.player_id;
              ME.akey = response.akey;
              console.log("id is " + ME.id + ", akey is " + ME.akey);
@@ -50,7 +76,8 @@ function register(playerName) {
 function quit() {
     console.log("quitting");
     ajax({uri: "/ajax/player/quit", data: {akey: ME.akey},
-        success: function (response) {
+         action: "quit",
+         success: function (response) {
              ME.id = undefined;
              ME.akey = undefined;
              WorkerScript.sendMessage({action: "quit", success: true, response: response});
@@ -59,7 +86,8 @@ function quit() {
 
 function createGame(callback) {
     ajax({uri: "/ajax/game/create", data: {akey: ME.akey},
-        success: function (response) {
+         action: "createGame",
+         success: function (response) {
              ME.gameId = response;
              console.log("game ID " + ME.gameId);
              if (callback !== undefined) {
@@ -67,49 +95,19 @@ function createGame(callback) {
              } else {
                  WorkerScript.sendMessage({action: "createGame", success: true, response: response});
              }
-        }});
-}
-
-function pollEvents() {
-    console.log("polling");
-    ajax({uri: "/ajax/get_events", data: {akey: ME.akey},
-        success: function (response) {
-             console.log("got events");
-             WorkerScript.sendMessage({action: "pollEvents", success: true, response: response});
          }});
 }
 
 function startGameWithBots() {
     ajax({uri: "/ajax/game/start_with_bots", data: {akey: ME.akey, game_id: ME.gameId},
-        success: function (response) {
-             console.log("game started");
-             //ME.eventTimer = setInterval(pollEvents, 2000); // MOO! setInterval does not work here!
-             WorkerScript.sendMessage({action: "startGameWithBots", success: true, response: response});
-        }});
-}
-
-function quickStart() {
-    createGame(startGameWithBots);
-}
-
-function getGameState() {
-    ajax({uri: "/ajax/game/get_state", data: {akey: ME.akey, game_id: ME.gameId},
-         success: function (response) {
-             WorkerScript.sendMessage({action: "getGameState", success: true, response: response});
-         }});
+         action: "startGameWithBots"});
 }
 
 function getGameInfo() {
     ajax({uri: "/ajax/game/get_info", data: {game_id: ME.gameId},
+         action: "getGameInfo",
          success: function (response) {
              WorkerScript.sendMessage({action: "getGameInfo", success: true, response: response, state:ME});
-         }});
-}
-
-function playCard(card) {
-    ajax({uri: "/ajax/game/play_card", data: {akey: ME.akey, game_id: ME.gameId, card: JSON.stringify(card)},
-         success: function (response) {
-             WorkerScript.sendMessage({action: "playCard", success: true, response: response});
          }});
 }
 
@@ -123,19 +121,21 @@ WorkerScript.onMessage = function (message) {
         quit();
         break;
     case "quickStart":
-        quickStart();
+        createGame(startGameWithBots);
         break;
     case "pollEvents":
-        pollEvents();
+        ajax({uri: "/ajax/get_events", data: {akey: ME.akey}, action: message.action});
         break;
     case "getGameState":
-        getGameState();
+        ajax({uri: "/ajax/game/get_state", data: {akey: ME.akey, game_id: ME.gameId},
+             action: message.action});
         break;
     case "getGameInfo":
         getGameInfo();
         break;
     case "playCard":
-        playCard(message.card);
+        ajax({uri: "/ajax/game/play_card", data: {akey: ME.akey, game_id: ME.gameId,
+             card: JSON.stringify(message.card)}, action: "playCard"});
         break;
     default:
         break;

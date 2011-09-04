@@ -229,6 +229,7 @@ function handleMessage(message) {
     case "playCard":
         if (! message.success) {
             console.log("playCard failed!");
+            console.log(message.response.code + " - " + message.response.message);
             break;
         }
         myWorker.sendMessage({action: "getGameState"});
