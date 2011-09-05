@@ -4,8 +4,11 @@ import "game.js" as Game
 Rectangle {
     width: 640
     height: 480
-    color: "#edecec"
+    //color: "#edecec"
+    color: systemPalette.window;
     id: mainRect
+
+    SystemPalette { id: systemPalette }
 
     WorkerScript {
         id: myWorker
@@ -17,9 +20,7 @@ Rectangle {
     Timer {
         id: eventFetchTimer
         interval: 2000; running: false; repeat: true
-        onTriggered: {
-            myWorker.sendMessage({action: "pollEvents"})
-        }
+        onTriggered: { myWorker.sendMessage({action: "pollEvents"}) }
 
         function triggerNow() {
             var wasRunning = eventFetchTimer.running;
@@ -57,6 +58,14 @@ Rectangle {
         }
     }
 
+    Dialog {
+        id: errorDialog
+        anchors.centerIn: parent
+        z: 20
+        color: "#ffcccc"
+        autoClose: true
+    }
+
     Column {
         id: column1
         x: 0
@@ -80,20 +89,20 @@ Rectangle {
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 id: nameInputItem
-                width: 80
+                width: 100
                 height: 25
                 color: "white"
                 border.color: "black"
+                radius: 4
 
                 TextInput {
                     anchors.centerIn: parent
                     id: nameInput
-                    width: 80
+                    width: parent.width - 4
                     /*
                     height: 20
                     */
                     text: "Your name"
-                    cursorVisible: true
                     font.family: "Lucida Grande"
                     font.pixelSize: 12
                     onFocusChanged: { if (focus) { text = "" } }

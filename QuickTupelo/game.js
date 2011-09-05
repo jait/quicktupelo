@@ -1,6 +1,11 @@
 
 var EVENTS = [];
 
+var RULE_ERROR = 2;
+var STATE_VOTING = 1;
+var STATE_ONGOING = 2;
+var NOLO = 0;
+
 function createCard(parent, suit, value) {
     var component = Qt.createComponent("Card.qml");
     var card = component.createObject(parent);
@@ -44,11 +49,11 @@ function onTurnEvent(event) {
 
 function onStateChanged(event) {
     var stateStr = undefined;
-    if (event.game_state.state == 1) {
+    if (event.game_state.state == STATE_VOTING) {
         stateStr = "Voting";
-    } else if (event.game_state.state == 2) { // VOTING => ONGOING
+    } else if (event.game_state.state == STATE_ONGOING) { // VOTING => ONGOING
         clearTable();
-        stateStr = event.game_state.mode == 0 ? "Playing NOLO": "Playing RAMI";
+        stateStr = event.game_state.mode == NOLO ? "Playing NOLO": "Playing RAMI";
     }
     if (stateStr) {
         console.log(stateStr);
@@ -230,6 +235,9 @@ function handleMessage(message) {
         if (! message.success) {
             console.log("playCard failed!");
             console.log(message.response.code + " - " + message.response.message);
+            if (message.response.code == RULE_ERROR) {
+                errorDialog.show(message.response.message);
+            }
             break;
         }
         myWorker.sendMessage({action: "getGameState"});
