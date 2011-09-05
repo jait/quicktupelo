@@ -7,6 +7,9 @@ Rectangle {
     property int suit
     property int value
     signal clicked
+    border.width: 1
+    border.color: "#3f000000"
+    radius: 5
 
     function suitToChar(suit) {
         var suits = [{name: "spades", char: "\u2660"},
