@@ -78,36 +78,15 @@ Rectangle {
             //anchors.centerIn: parent
             height: 100
             anchors.horizontalCenter: parent.horizontalCenter
-            /*
-            Text {
-                id: loginLabel
-                anchors.centerIn: parent
-                text: "Your name"
-                font.pixelSize: 12
-            }
-            */
-            Rectangle {
+
+            TextInputBox {
                 anchors.verticalCenter: parent.verticalCenter
-                id: nameInputItem
+                id: nameInput
                 width: 100
                 height: 25
-                color: "white"
-                border.color: "black"
-                radius: 4
-
-                TextInput {
-                    anchors.centerIn: parent
-                    id: nameInput
-                    width: parent.width - 4
-                    /*
-                    height: 20
-                    */
-                    text: "Your name"
-                    font.family: "Lucida Grande"
-                    font.pixelSize: 12
-                    onFocusChanged: { if (focus) { text = "" } }
-                }
+                text: "Your name"
             }
+
             Button {
                 height: 25
                 anchors.verticalCenter: parent.verticalCenter
