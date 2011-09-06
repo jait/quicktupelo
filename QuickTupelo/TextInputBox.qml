@@ -7,16 +7,32 @@ Rectangle {
     border.color: "black"
     radius: 4
     property alias text: textInput.text
+    property bool modified: (textInput.state == "modified")
 
     TextInput {
         anchors.centerIn: parent
         id: textInput
         width: parent.width - 4
+        color: "#666666"
         /*
         height: 20
         */
         font.family: "Lucida Grande"
         font.pixelSize: 12
-        onFocusChanged: { if (focus) { text = "" } }
+        onFocusChanged: {
+            if (focus && state !== "modified") {
+                state = "modified";
+            }
+        }
+        states: [
+            State {
+                name: "modified"
+                PropertyChanges {
+                    target: textInput
+                    text: ""
+                    color: "black"
+                }
+            }
+        ]
     }
 }

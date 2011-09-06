@@ -91,7 +91,13 @@ Rectangle {
                 height: 25
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Sign on"
-                onClicked: myWorker.sendMessage({action: "register", playerName: nameInput.text})
+                onClicked: {
+                    if (! nameInput.modified || nameInput.text === "") {
+                        errorDialog.show("Please enter your name first");
+                    } else {
+                        myWorker.sendMessage({action: "register", playerName: nameInput.text})
+                    }
+                }
                 // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
             }
         }
