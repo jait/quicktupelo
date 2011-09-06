@@ -2,7 +2,7 @@ import QtQuick 1.0
 
 Rectangle {
     width: 480
-    height: 50
+    height: 50 // Card.height
     property alias model: handView.model
     signal cardClicked(variant card)
     id: handRect
@@ -29,7 +29,7 @@ Rectangle {
         id: handDelegate
         Item {
             id: delegateItem
-            width: 30
+            width: delegateCard.width // 30
             Card {
                 id: delegateCard
                 suit: csuit; value: cvalue
@@ -39,11 +39,14 @@ Rectangle {
     }
 
     ListView {
-        width: parent.width
         id: handView
+        property int minWidth: handView.count * 35 - 5 // 35 = delegateItem.width + handView.spacing
+        width: (handView.minWidth > parent.width) ? parent.width: handView.minWidth
+        anchors.horizontalCenter: parent.horizontalCenter
         model: handModel
         orientation: ListView.Horizontal
         delegate: handDelegate
         spacing: 5
+        interactive: false
     }
 }
