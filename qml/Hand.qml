@@ -40,8 +40,8 @@ Rectangle {
 
     ListView {
         id: handView
-        property int minWidth: handView.count * 35 - 5 // 35 = delegateItem.width + handView.spacing
-        width: (handView.minWidth > parent.width) ? parent.width: handView.minWidth
+        property int minWidth: count * (30 + spacing) - spacing // 35 = delegateItem.width + handView.spacing
+        width: (minWidth > parent.width) ? parent.width: minWidth
         anchors.horizontalCenter: parent.horizontalCenter
         model: handModel
         orientation: ListView.Horizontal

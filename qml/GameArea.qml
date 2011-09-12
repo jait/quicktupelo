@@ -60,8 +60,10 @@ Rectangle {
                         spacing: 5
                         Text {
                             id: playerName1
-                            anchors.verticalCenter: parent.verticalCenter
+                            // Qt Quick 1.1 would have layoutDirection...
                             width: parent.width - card1.width - parent.spacing
+                            anchors.verticalCenter: parent.verticalCenter
+                            horizontalAlignment: Text.AlignRight
                         }
                         Rectangle {
                             id: card1
@@ -69,7 +71,6 @@ Rectangle {
                             width: 30; height: 50
                             anchors.verticalCenter: parent.verticalCenter
                         }
-
                     }
                 }
                 Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
