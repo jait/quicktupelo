@@ -66,7 +66,7 @@ function register(playerName) {
     ajax({uri: "/ajax/player/register", data: {player: JSON.stringify(player)},
          action: "register",
          success: function (response) {
-             ME.id = response.player_id;
+             ME.id = response.id;
              ME.akey = response.akey;
              console.log("id is " + ME.id + ", akey is " + ME.akey);
              WorkerScript.sendMessage({action: "register", success: true, response: response});
