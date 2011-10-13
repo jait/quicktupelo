@@ -1,12 +1,10 @@
-import QtQuick 1.0
+import QtQuick 1.1
+import com.nokia.meego 1.0
 import "game.js" as Game
 
-Rectangle {
-    width: 640
-    height: 480
-    //color: "#edecec"
+PageStackWindow {
     color: systemPalette.window;
-    id: mainRect
+    id: mainWindow
 
     SystemPalette { id: systemPalette }
 
@@ -58,7 +56,7 @@ Rectangle {
         }
     }
 
-    Dialog {
+    MyDialog {
         id: errorDialog
         anchors.centerIn: parent
         z: 20
@@ -76,23 +74,21 @@ Rectangle {
             id: loginRow
             spacing: 10
             //anchors.centerIn: parent
-            height: 100
+            height: 200
             anchors.horizontalCenter: parent.horizontalCenter
 
-            TextInputBox {
+            TextField {
                 anchors.verticalCenter: parent.verticalCenter
-                id: nameInput
                 width: 100
-                height: 25
-                text: "Your name"
+                id: nameInput
+                placeholderText: "Your name"
             }
 
             Button {
-                height: 25
                 anchors.verticalCenter: parent.verticalCenter
                 text: "Sign on"
                 onClicked: {
-                    if (! nameInput.modified || nameInput.text === "") {
+                    if (nameInput.text === "") {
                         errorDialog.show("Please enter your name first");
                     } else {
                         myWorker.sendMessage({action: "register", playerName: nameInput.text})
