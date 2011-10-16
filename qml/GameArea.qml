@@ -4,14 +4,14 @@ import "uiconstants.js" as UI
 Rectangle {
     id: gameAreaRect
     width: parent.width
-    property alias handModel: myHand.model
+    property alias hand: myHand
     property alias players: table.children
     signal cardClicked(variant card)
     signal tableClicked
 
     function clearAll() {
         var i;
-        handModel.clear();
+        myHand.clear();
         clearTable();
         // clear player names
         for (i = 0; i < players.length; i++) {
@@ -125,11 +125,11 @@ Rectangle {
             }
             MouseArea { anchors.fill: parent; onClicked: gameAreaRect.tableClicked() }
         }
+
         Hand {
             id: myHand
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-            color: gameAreaRect.color
             Component.onCompleted: myHand.cardClicked.connect(gameAreaRect.cardClicked)
         }
     }

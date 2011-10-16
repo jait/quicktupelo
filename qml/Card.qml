@@ -7,7 +7,7 @@ Rectangle {
     color: "white"
     property int suit
     property int value
-    signal clicked
+    signal clicked (variant card)
     border.width: 1
     border.color: "#3f000000"
     radius: 5
@@ -56,6 +56,6 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: parent.clicked()
+        onClicked: parent.clicked(parent)
     }
 }

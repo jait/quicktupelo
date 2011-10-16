@@ -1,56 +1,39 @@
 import QtQuick 1.1
+import com.nokia.meego 1.0
+import "game.js" as Game
 import "uiconstants.js" as UI
 
-Rectangle {
-    //width: 480 > parent.width ? parent.width : 480
+Flickable {
+    id: flickable
     height: UI.CARD_HEIGHT
-    property alias model: handView.model
+    contentHeight: UI.CARD_HEIGHT
+    contentWidth: rowContainer.width
+    flickableDirection: Flickable.HorizontalFlick
     signal cardClicked(variant card)
-    id: handRect
 
-    ListModel {
-        id: handModel
-
-//        ListElement {
-//            csuit: 1
-//            cvalue: 5
-//        }
-//        ListElement {
-//            csuit: 2
-//            cvalue: 6
-//        }
-//        ListElement {
-//            csuit: 3
-//            cvalue: 7
-//        }
-
-    }
-
-    Component {
-        id: handDelegate
-        Item {
-            id: delegateItem
-            width: delegateCard.width // 30
-            Card {
-                id: delegateCard
-                suit: csuit; value: cvalue
-                onClicked: handRect.cardClicked(delegateCard)
-            }
+    function clear() {
+        for (var i = cardContainer.children.length - 1; i >= 0; i--) {
+            cardContainer.children[i].destroy();
         }
     }
 
-    ListView {
-        id: handView
-        property int minWidth: count * (UI.CARD_WIDTH + spacing) - spacing // 35 = delegateItem.width + handView.spacing
-        width: (minWidth > parent.width) ? parent.width: minWidth
-        //width: parent.width
+    function appendCard(suit, value) {
+        var card = Game.createCard(cardContainer, suit, value);
+        card.clicked.connect(cardClicked);
+    }
+
+    Item {
+        id: rowContainer
+        width: cardContainer.width > flickable.width ? cardContainer.width : flickable.width
+        //onWidthChanged: console.log("rowContainer w: " + width)
         height: UI.CARD_HEIGHT
-        anchors.horizontalCenter: parent.horizontalCenter
-        model: handModel
-        orientation: ListView.Horizontal
-        delegate: handDelegate
-        spacing: UI.HAND_SPACING
-        interactive: true //minWidth > parent.width // allow flicking
-        clip: true // interactive
+        Row {
+            id: cardContainer
+            anchors.centerIn: parent
+            spacing: 5
+            width: children.length > 0 ? children.length * (UI.CARD_WIDTH + spacing) - spacing : 0
+            height: parent.height
+            //onWidthChanged: console.log("cardContainer w: " + width)
+        }
     }
 }

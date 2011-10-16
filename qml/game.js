@@ -107,11 +107,10 @@ function queueEvent(event) {
 }
 
 function updateHand(newHand) {
-    gameArea.handModel.clear();
+    gameArea.hand.clear();
     var i = 0;
     for (i = 0; i < newHand.length; i++) {
-        gameArea.handModel.append({"csuit": newHand[i].suit,
-                            "cvalue": newHand[i].value});
+        gameArea.hand.appendCard(newHand[i].suit, newHand[i].value);
     }
 }
 
