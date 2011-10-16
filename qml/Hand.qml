@@ -1,8 +1,9 @@
-import QtQuick 1.0
+import QtQuick 1.1
+import "uiconstants.js" as UI
 
 Rectangle {
-    width: 480
-    height: 50 // Card.height
+    //width: 480 > parent.width ? parent.width : 480
+    height: UI.CARD_HEIGHT
     property alias model: handView.model
     signal cardClicked(variant card)
     id: handRect
@@ -40,13 +41,16 @@ Rectangle {
 
     ListView {
         id: handView
-        property int minWidth: count * (30 + spacing) - spacing // 35 = delegateItem.width + handView.spacing
+        property int minWidth: count * (UI.CARD_WIDTH + spacing) - spacing // 35 = delegateItem.width + handView.spacing
         width: (minWidth > parent.width) ? parent.width: minWidth
+        //width: parent.width
+        height: UI.CARD_HEIGHT
         anchors.horizontalCenter: parent.horizontalCenter
         model: handModel
         orientation: ListView.Horizontal
         delegate: handDelegate
-        spacing: 5
-        interactive: false
+        spacing: UI.HAND_SPACING
+        interactive: true //minWidth > parent.width // allow flicking
+        clip: true // interactive
     }
 }

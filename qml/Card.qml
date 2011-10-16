@@ -1,8 +1,9 @@
 import QtQuick 1.0
+import "uiconstants.js" as UI
 
 Rectangle {
-    width: 30
-    height: 50
+    width: UI.CARD_WIDTH
+    height: UI.CARD_HEIGHT
     color: "white"
     property int suit
     property int value

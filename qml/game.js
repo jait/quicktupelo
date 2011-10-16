@@ -62,7 +62,7 @@ function onStateChanged(event) {
 }
 
 function onCardClicked(card) {
-    myWorker.sendMessage({"action": "playCard",
+    worker.sendMessage({"action": "playCard",
                          "card": {"suit": card.suit, "value": card.value}});
 }
 
@@ -170,24 +170,25 @@ function handleMessage(message) {
     switch (message.action) {
     case "register":
         if (message.success) {
-            mainRect.state = "REGISTERED";
+            mainWindow.state = "REGISTERED";
             // go play straight away
-            myWorker.sendMessage({action: "quickStart"});
+            worker.sendMessage({action: "quickStart"});
         } else {
             console.log("Register failed!");
+            errorDialog.show("Could not sign on!");
         }
         break;
     case "quit":
         if (! message.success) {
             console.log("Quit failed!");
         }
-        mainRect.state = "";
+        mainWindow.state = "";
         // TODO: wrap these behind a state change
-        gameArea.handModel.clear();
-        gameArea.clearTable();
+        gameArea.clearAll();
         eventFetchTimer.stop();
         tableClearTimer.stop();
         statusRow.gameState = "";
+        mainWindow.pageStack.pop();
         break;
     case "startGame":
     case "startGameWithBots":
@@ -195,9 +196,9 @@ function handleMessage(message) {
             console.log("startGame failed!");
             break;
         }
-        mainRect.state = "IN_GAME";
-        myWorker.sendMessage({action: "getGameInfo"});
-        myWorker.sendMessage({action: "getGameState"});
+        mainWindow.state = "IN_GAME";
+        worker.sendMessage({action: "getGameInfo"});
+        worker.sendMessage({action: "getGameState"});
         break;
     case "pollEvents":
         if (! message.success) {
@@ -240,7 +241,7 @@ function handleMessage(message) {
             }
             break;
         }
-        myWorker.sendMessage({action: "getGameState"});
+        worker.sendMessage({action: "getGameState"});
         eventFetchTimer.triggerNow();
         break;
     default:

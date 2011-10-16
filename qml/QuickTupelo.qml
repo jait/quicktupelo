@@ -5,27 +5,29 @@ import "game.js" as Game
 PageStackWindow {
     color: systemPalette.window;
     id: mainWindow
+    initialPage: loginPage
+    showStatusBar: false
+    showToolBar: true
 
     SystemPalette { id: systemPalette }
 
     WorkerScript {
-        id: myWorker
+        id: worker
         source: "workerscript.js"
-
         onMessage: { Game.handleMessage(messageObject) }
     }
 
     Timer {
         id: eventFetchTimer
         interval: 2000; running: false; repeat: true
-        onTriggered: { myWorker.sendMessage({action: "pollEvents"}) }
+        onTriggered: { worker.sendMessage({action: "pollEvents"}) }
 
         function triggerNow() {
             var wasRunning = eventFetchTimer.running;
             if (wasRunning) {
                 eventFetchTimer.stop();
             }
-            myWorker.sendMessage({action: "pollEvents"});
+            worker.sendMessage({action: "pollEvents"});
             if (wasRunning) {
                 eventFetchTimer.start();
             }
@@ -59,123 +61,98 @@ PageStackWindow {
     MyDialog {
         id: errorDialog
         anchors.centerIn: parent
-        z: 20
+        z: 200
         color: "#ffcccc"
         autoClose: true
     }
 
-    Column {
-        id: column1
-        x: 0
-        y: 0
-        anchors.fill: parent
-        spacing: 10
-        Row {
-            id: loginRow
-            spacing: 10
-            //anchors.centerIn: parent
-            height: 200
-            anchors.horizontalCenter: parent.horizontalCenter
+    LoginPage {
+        id: loginPage
+        onLoginClicked: worker.sendMessage({action: "register", playerName: playerName})
+        // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
+    }
 
-            TextField {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 100
-                id: nameInput
-                placeholderText: "Your name"
+    Page {
+        id: gamePage
+
+        tools: ToolBarLayout {
+            ToolButton {
+                anchors.centerIn: parent
+                text: qsTr("Sign off")
+                onClicked: quitDialog.open()
+            }
+        }
+
+        Column {
+            anchors.fill: parent
+            spacing: 10
+
+            Row {
+                id: statusRow
+                anchors.horizontalCenter: parent.horizontalCenter
+                height: 50
+                spacing: 10
+                property string name
+                property alias gameState: gameStateText.text
+                onNameChanged: { loggedLabel.text = "Signed on as " + name }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    id: gameStateText
+                    font.pixelSize: 12
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    id: loggedLabel
+                    text: "<none>"
+                    font.pixelSize: 12
+                }
             }
 
-            Button {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Sign on"
-                onClicked: {
-                    if (nameInput.text === "") {
-                        errorDialog.show("Please enter your name first");
-                    } else {
-                        myWorker.sendMessage({action: "register", playerName: nameInput.text})
+            GameArea {
+                id: gameArea
+                color: mainWindow.color
+                height: parent.height - statusRow.height - parent.spacing
+                Component.onCompleted: cardClicked.connect(Game.onCardClicked)
+                onTableClicked: {
+                    if (tableClearTimer.running) {
+                        tableClearTimer.stop()
+                        gameArea.clearTable()
+                        eventProcessTimer.start()
                     }
                 }
-                // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
             }
         }
-        Row {
-            id: statusRow
-            visible: false
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: 50
-            spacing: 10
-            property string name
-            property alias gameState: gameStateText.text
-            onNameChanged: { loggedLabel.text = "Signed on as " + name }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                id: gameStateText
-                font.pixelSize: 12
-            }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                id: loggedLabel
-                text: "<none>"
-                font.pixelSize: 12
-            }
-            Button {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "Sign off"
-                onClicked: myWorker.sendMessage({action: "quit"})
-            }
-        }
-
-        GameArea {
-            visible: false
-            id: gameArea
-            color: mainRect.color
-            Component.onCompleted: cardClicked.connect(Game.onCardClicked)
-            onTableClicked: {
-                if (tableClearTimer.running) {
-                    tableClearTimer.stop()
-                    gameArea.clearTable()
-                    eventProcessTimer.start()
-                }
-            }
+        QueryDialog {
+            id: quitDialog
+            titleText: qsTr("Sign off?")
+            message: qsTr("Leaving the ongoing game will end the game for other players as well.")
+            acceptButtonText: qsTr("Yes")
+            rejectButtonText: qsTr("No")
+            onAccepted: worker.sendMessage({action: "quit"})
         }
     }
+
     states: [
         State {
             name: "REGISTERED"
-
             PropertyChanges {
                 target: statusRow
-                visible: true
-                name: nameInput.text
+                name: loginPage.playerName
                 gameState: ""
             }
-
-            PropertyChanges {
-                target: loginRow
-                visible: false
+            StateChangeScript {
+                script: mainWindow.pageStack.push(gamePage);
             }
         },
         State {
             name: "IN_GAME"
-
             PropertyChanges {
                 target: eventFetchTimer
                 running: true
             }
-
             PropertyChanges {
                 target: statusRow
-                visible: true
-                name: nameInput.text
-            }
-
-            PropertyChanges {
-                target: loginRow
-                visible: false
-            }
-
-            PropertyChanges {
-                target: gameArea
-                visible: true
+                name: loginPage.playerName
             }
         }
     ]

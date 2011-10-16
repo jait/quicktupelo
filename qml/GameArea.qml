@@ -1,13 +1,25 @@
 import QtQuick 1.0
+import "uiconstants.js" as UI
 
 Rectangle {
     id: gameAreaRect
     width: parent.width
-    height: parent.height - 100
     property alias handModel: myHand.model
     property alias players: table.children
     signal cardClicked(variant card)
     signal tableClicked
+
+    function clearAll() {
+        var i;
+        handModel.clear();
+        clearTable();
+        // clear player names
+        for (i = 0; i < players.length; i++) {
+            if (players[i].name !== undefined) {
+                players[i].name = "";
+            }
+        }
+    }
 
     function clearTable() {
         var i, card, j;
@@ -23,6 +35,7 @@ Rectangle {
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 10
+        width: parent.width
         Item {
             width: 250 //80 * 3 + 2 * 5
             height: 250 //80 * 3 + 2 * 5
@@ -44,7 +57,7 @@ Rectangle {
                         Rectangle {
                             id: card2
                             color: gameAreaRect.color
-                            width: 30; height: 50
+                            width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
@@ -68,7 +81,7 @@ Rectangle {
                         Rectangle {
                             id: card1
                             color: gameAreaRect.color
-                            width: 30; height: 50
+                            width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -85,7 +98,7 @@ Rectangle {
                         Rectangle {
                             id: card3
                             color: gameAreaRect.color
-                            width: 30; height: 50
+                            width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Text { id: playerName3; anchors.verticalCenter: parent.verticalCenter }
@@ -102,7 +115,7 @@ Rectangle {
                         Rectangle {
                             id: card0
                             color: gameAreaRect.color
-                            width: 30; height: 50;
+                            width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT;
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
                         Text { id: playerName0;  anchors.horizontalCenter: parent.horizontalCenter }
@@ -114,7 +127,7 @@ Rectangle {
         }
         Hand {
             id: myHand
-            //width: parent.width
+            width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
             color: gameAreaRect.color
             Component.onCompleted: myHand.cardClicked.connect(gameAreaRect.cardClicked)
