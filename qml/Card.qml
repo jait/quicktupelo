@@ -52,6 +52,7 @@ Rectangle {
         anchors.centerIn: parent
         text: "" + suitToChar(parent.suit) + valueToChar(parent.value)
         color: (parent.suit % 2 === 0 ? "black" : "red")
+        font.pixelSize: UI.CARD_FONTSIZE
     }
 
     MouseArea {

@@ -53,7 +53,11 @@ Rectangle {
                     property alias card: card2
                     Column {
                         anchors.fill: parent
-                        Text { id: playerName2; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text {
+                            id: playerName2
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pixelSize: UI.FONT_DEFAULT
+                        }
                         Rectangle {
                             id: card2
                             color: gameAreaRect.color
@@ -77,6 +81,7 @@ Rectangle {
                             width: parent.width - card1.width - parent.spacing
                             anchors.verticalCenter: parent.verticalCenter
                             horizontalAlignment: Text.AlignRight
+                            font.pixelSize: UI.FONT_DEFAULT
                         }
                         Rectangle {
                             id: card1
@@ -101,7 +106,11 @@ Rectangle {
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text { id: playerName3; anchors.verticalCenter: parent.verticalCenter }
+                        Text {
+                            id: playerName3
+                            anchors.verticalCenter: parent.verticalCenter
+                            font.pixelSize: UI.FONT_DEFAULT
+                        }
                     }
                 }
                 Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
@@ -118,7 +127,11 @@ Rectangle {
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT;
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
-                        Text { id: playerName0;  anchors.horizontalCenter: parent.horizontalCenter }
+                        Text {
+                            id: playerName0
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            font.pixelSize: UI.FONT_DEFAULT
+                        }
                     }
                 }
                 Rectangle { color: gameAreaRect.color; width: 1; height: 1 }

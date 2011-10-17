@@ -1,12 +1,12 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
 import "game.js" as Game
+import "uiconstants.js" as UI
 
 PageStackWindow {
     color: systemPalette.window;
     id: mainWindow
     initialPage: loginPage
-    showStatusBar: false
     showToolBar: true
 
     SystemPalette { id: systemPalette }
@@ -98,13 +98,15 @@ PageStackWindow {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     id: gameStateText
-                    font.pixelSize: 12
+                    font.pixelSize: UI.FONT_LSMALL
+                    font.weight: Font.Light
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     id: loggedLabel
                     text: "<none>"
-                    font.pixelSize: 12
+                    font.pixelSize: UI.FONT_LSMALL
+                    font.weight: Font.Light
                 }
             }
 
