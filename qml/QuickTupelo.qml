@@ -94,17 +94,9 @@ PageStackWindow {
                 spacing: 10
                 property string name
                 property alias gameState: gameStateText.text
-                onNameChanged: { loggedLabel.text = "Signed on as " + name }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     id: gameStateText
-                    font.pixelSize: UI.FONT_LSMALL
-                    font.weight: Font.Light
-                }
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    id: loggedLabel
-                    text: "<none>"
                     font.pixelSize: UI.FONT_LSMALL
                     font.weight: Font.Light
                 }
