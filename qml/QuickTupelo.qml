@@ -87,19 +87,8 @@ PageStackWindow {
             anchors.fill: parent
             spacing: 10
 
-            Row {
+            PageHeader {
                 id: statusRow
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: 50
-                spacing: 10
-                property string name
-                property alias gameState: gameStateText.text
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    id: gameStateText
-                    font.pixelSize: UI.FONT_LSMALL
-                    font.weight: Font.Light
-                }
             }
 
             GameArea {
@@ -132,7 +121,7 @@ PageStackWindow {
             PropertyChanges {
                 target: statusRow
                 name: loginPage.playerName
-                gameState: ""
+                title: ""
             }
             StateChangeScript {
                 script: mainWindow.pageStack.push(gamePage);

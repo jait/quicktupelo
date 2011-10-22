@@ -57,7 +57,7 @@ function onStateChanged(event) {
     }
     if (stateStr) {
         console.log(stateStr);
-        statusRow.gameState = stateStr;
+        statusRow.title = stateStr;
     }
 }
 
@@ -186,7 +186,7 @@ function handleMessage(message) {
         gameArea.clearAll();
         eventFetchTimer.stop();
         tableClearTimer.stop();
-        statusRow.gameState = "";
+        statusRow.title = "";
         mainWindow.pageStack.pop();
         break;
     case "startGame":

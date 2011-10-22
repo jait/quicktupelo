@@ -5,6 +5,10 @@ Page {
     signal loginClicked (string playerName)
     property alias playerName: nameInput.text
 
+    PageHeader {
+        title: "Tupelo"
+    }
+
     TextField {
         anchors.horizontalCenter: parent.horizontalCenter
         width: loginButton.width
