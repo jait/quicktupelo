@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
+import "uiconstants.js" as UI
 
 Page {
     signal loginClicked (string playerName)
@@ -15,7 +16,7 @@ Page {
         id: nameInput
         placeholderText: qsTr("Your name")
         anchors.bottom: loginButton.top
-        anchors.bottomMargin: 20
+        anchors.bottomMargin: UI.DEFAULT_MARGIN
     }
     Button {
         id: loginButton

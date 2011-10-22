@@ -35,7 +35,7 @@ Rectangle {
 
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 10
+        spacing: UI.DEFAULT_MARGIN
         width: parent.width
         Item {
             width: 250 //80 * 3 + 2 * 5
