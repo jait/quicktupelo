@@ -8,7 +8,13 @@ Rectangle {
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    color: "gray"
+    //color: "gray"
+    property color accentColor: theme.inverted ? UI.COLOR_INVERTED_BACKGROUND : "gray"
+
+    gradient: Gradient {
+        GradientStop { color: Qt.lighter(accentColor, 1.25); position: 0.0 }
+        GradientStop { color: Qt.darker(accentColor, 1.5); position: 1.0 }
+    }
 
     Text {
         id: titleText

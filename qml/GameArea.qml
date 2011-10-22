@@ -32,6 +32,7 @@ Rectangle {
             }
         }
     }
+
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 10
@@ -53,10 +54,9 @@ Rectangle {
                     property alias card: card2
                     Column {
                         anchors.fill: parent
-                        Text {
+                        PlayerLabel {
                             id: playerName2
                             anchors.horizontalCenter: parent.horizontalCenter
-                            font.pixelSize: UI.FONT_DEFAULT
                         }
                         Rectangle {
                             id: card2
@@ -75,13 +75,12 @@ Rectangle {
                     Row {
                         anchors.fill: parent
                         spacing: 5
-                        Text {
+                        PlayerLabel {
                             id: playerName1
                             // Qt Quick 1.1 would have layoutDirection...
                             width: parent.width - card1.width - parent.spacing
                             anchors.verticalCenter: parent.verticalCenter
                             horizontalAlignment: Text.AlignRight
-                            font.pixelSize: UI.FONT_DEFAULT
                         }
                         Rectangle {
                             id: card1
@@ -106,10 +105,9 @@ Rectangle {
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text {
+                        PlayerLabel {
                             id: playerName3
                             anchors.verticalCenter: parent.verticalCenter
-                            font.pixelSize: UI.FONT_DEFAULT
                         }
                     }
                 }
@@ -127,10 +125,9 @@ Rectangle {
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT;
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
-                        Text {
+                        PlayerLabel {
                             id: playerName0
                             anchors.horizontalCenter: parent.horizontalCenter
-                            font.pixelSize: UI.FONT_DEFAULT
                         }
                     }
                 }

@@ -4,7 +4,6 @@ import "game.js" as Game
 import "uiconstants.js" as UI
 
 PageStackWindow {
-    color: systemPalette.window;
     id: mainWindow
     initialPage: loginPage
     showToolBar: true
@@ -93,7 +92,8 @@ PageStackWindow {
 
             GameArea {
                 id: gameArea
-                color: mainWindow.color
+                color: theme.inverted ? UI.COLOR_INVERTED_BACKGROUND : systemPalette.window
+                //color: mainWindow.platformStyle.backgroundColor // does not exist 1.0
                 height: parent.height - statusRow.height - parent.spacing
                 Component.onCompleted: cardClicked.connect(Game.onCardClicked)
                 onTableClicked: {
@@ -115,12 +115,13 @@ PageStackWindow {
         }
     }
 
+    //Component.onCompleted: theme.inverted = true
+
     states: [
         State {
             name: "REGISTERED"
             PropertyChanges {
                 target: statusRow
-                name: loginPage.playerName
                 title: ""
             }
             StateChangeScript {
@@ -132,10 +133,6 @@ PageStackWindow {
             PropertyChanges {
                 target: eventFetchTimer
                 running: true
-            }
-            PropertyChanges {
-                target: statusRow
-                name: loginPage.playerName
             }
         }
     ]

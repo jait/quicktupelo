@@ -10,3 +10,5 @@ var CARD_FONTSIZE = 18;
 var FONT_XLARGE = 32;
 var FONT_DEFAULT = 24;
 var FONT_LSMALL = 22;
+// can't believe we cannot get this at runtime
+var COLOR_INVERTED_BACKGROUND = "#000000";
