@@ -7,10 +7,11 @@ Rectangle {
     color: "white"
     property int suit
     property int value
-    property double origHeight: height
-    property double origWidth: width
-    property double origTextPixelSize: UI.CARD_FONTSIZE // cardText.pixelSize not available
-    property double origY: y
+    //property real origHeight: height
+    //property real origWidth: width
+    //property real origTextPixelSize: UI.CARD_FONTSIZE // cardText.pixelSize not available
+    property real origY: y
+    property real magnifyFactor: 2.0
     signal clicked (variant card)
     signal pressAndHold (variant card)
     signal released (variant card)
@@ -51,30 +52,49 @@ Rectangle {
     }
 
     function magnify(mode) {
-        origHeight = height;
-        height *= 2;
-        origY = y;
-        // 0 or undefined => keep top
+//        origHeight = height;
+//        height *= magnifyFactor;
+          origY = y;
+//        // 0 or undefined => keep top
+//        if (mode === UI.MAGNIFY_KEEP_VCENTER) {
+//            y -= origHeight / 2;
+//        } else if (mode === UI.MAGNIFY_KEEP_BOTTOM) {
+//            y -= origHeight;
+//        }
+//        origWidth = width;
+//        width *= magnifyFactor;
+//        origTextPixelSize = cardText.font.pixelSize;
+//        cardText.font.pixelSize *= magnifyFactor;
+        scale *= magnifyFactor;
         if (mode === UI.MAGNIFY_KEEP_VCENTER) {
-            y -= origHeight / 2;
+            y -= height / 2 / magnifyFactor;
         } else if (mode === UI.MAGNIFY_KEEP_BOTTOM) {
-            y -= origHeight;
+            y -= height / magnifyFactor;
         }
-        origWidth = width;
-        width *= 2;
-        origTextPixelSize = cardText.font.pixelSize;
-        cardText.font.pixelSize *= 2;
+
+        z += 1; // so that the card appears on top of its neighbors
     }
 
     function stopMagnify() {
-        height = origHeight;
+        if (scale !== 1.0) {
+            scale = 1.0;
+            z -= 1; // should set this after animation
+        }
         y = origY;
-        width = origWidth;
-        cardText.font.pixelSize = origTextPixelSize;
+//        height = origHeight;
+//        width = origWidth;
+//        cardText.font.pixelSize = origTextPixelSize;
     }
 
     onSuitChanged: update()
     onValueChanged: update()
+
+    Behavior on scale {
+        NumberAnimation { easing.type: Easing.InQuart; duration: 200 }
+    }
+    Behavior on y {
+        NumberAnimation { easing.type: Easing.InQuart; duration: 200 }
+    }
 
     Text {
         id: cardText
