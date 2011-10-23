@@ -1,8 +1,8 @@
 import QtQuick 1.0
 import "uiconstants.js" as UI
 
-Rectangle {
-    id: gameAreaRect
+Item {
+    id: gameAreaContainer
     width: parent.width
     property alias hand: myHand
     property alias players: table.children
@@ -46,8 +46,8 @@ Rectangle {
                 columns: 3
                 spacing: 5
                 anchors.horizontalCenter: parent.horizontalCenter
-                Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
-                Rectangle { color: gameAreaRect.color; id: table_2; width: 80; height: 80;
+                Item { width: 1; height: 1 }
+                Item { id: table_2; width: 80; height: 80;
                     property alias name: playerName2.text
                     property int index: 2
                     property string playerId
@@ -58,16 +58,15 @@ Rectangle {
                             id: playerName2
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
-                        Rectangle {
+                        Item {
                             id: card2
-                            color: gameAreaRect.color
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
                 }
-                Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
-                Rectangle { color: gameAreaRect.color; id: table_1; width: 80; height: 80;
+                Item { width: 1; height: 1 }
+                Item { id: table_1; width: 80; height: 80;
                     property int index: 1
                     property alias name: playerName1.text
                     property string playerId
@@ -82,16 +81,15 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             horizontalAlignment: Text.AlignRight
                         }
-                        Rectangle {
+                        Item {
                             id: card1
-                            color: gameAreaRect.color
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
                 }
-                Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
-                Rectangle { color: gameAreaRect.color; id: table_3; width: 80; height: 80;
+                Item { width: 1; height: 1 }
+                Item { id: table_3; width: 80; height: 80;
                     property alias name: playerName3.text
                     property int index: 3
                     property string playerId
@@ -99,9 +97,8 @@ Rectangle {
                     Row {
                         anchors.fill: parent
                         spacing: 5
-                        Rectangle {
+                        Item {
                             id: card3
-                            color: gameAreaRect.color
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT
                             anchors.verticalCenter: parent.verticalCenter
                         }
@@ -111,17 +108,16 @@ Rectangle {
                         }
                     }
                 }
-                Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
-                Rectangle { color: gameAreaRect.color; id: table_0; width: 80; height: 80;
+                Item { width: 1; height: 1 }
+                Item { id: table_0; width: 80; height: 80;
                     property alias name: playerName0.text
                     property int index: 0
                     property string playerId
                     property alias card: card0
                     Column {
                         anchors.fill: parent
-                        Rectangle {
+                        Item {
                             id: card0
-                            color: gameAreaRect.color
                             width: UI.CARD_WIDTH; height: UI.CARD_HEIGHT;
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
@@ -131,16 +127,16 @@ Rectangle {
                         }
                     }
                 }
-                Rectangle { color: gameAreaRect.color; width: 1; height: 1 }
+                Item { width: 1; height: 1 }
             }
-            MouseArea { anchors.fill: parent; onClicked: gameAreaRect.tableClicked() }
+            MouseArea { anchors.fill: parent; onClicked: gameAreaContainer.tableClicked() }
         }
 
         Hand {
             id: myHand
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
-            Component.onCompleted: myHand.cardClicked.connect(gameAreaRect.cardClicked)
+            Component.onCompleted: myHand.cardClicked.connect(gameAreaContainer.cardClicked)
         }
     }
 }
