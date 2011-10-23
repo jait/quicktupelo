@@ -8,8 +8,6 @@ PageStackWindow {
     initialPage: loginPage
     showToolBar: true
 
-    SystemPalette { id: systemPalette }
-
     WorkerScript {
         id: worker
         source: "workerscript.js"
@@ -92,8 +90,6 @@ PageStackWindow {
 
             GameArea {
                 id: gameArea
-                color: theme.inverted ? UI.COLOR_INVERTED_BACKGROUND : systemPalette.window
-                //color: mainWindow.platformStyle.backgroundColor // does not exist 1.0
                 height: parent.height - statusRow.height - parent.spacing
                 Component.onCompleted: cardClicked.connect(Game.onCardClicked)
                 onTableClicked: {
