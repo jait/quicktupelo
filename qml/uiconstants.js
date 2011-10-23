@@ -12,3 +12,8 @@ var FONT_DEFAULT = 24;
 var FONT_LSMALL = 22;
 // can't believe we cannot get this at runtime
 var COLOR_INVERTED_BACKGROUND = "#000000";
+
+var MAGNIFY_KEEP_TOP = 0;
+var MAGNIFY_KEEP_VCENTER = 1;
+var MAGNIFY_KEEP_BOTTOM = 2;
+

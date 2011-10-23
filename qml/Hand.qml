@@ -8,7 +8,8 @@ Flickable {
     contentHeight: UI.CARD_HEIGHT
     contentWidth: rowContainer.width
     flickableDirection: Flickable.HorizontalFlick
-    signal cardClicked(variant card)
+    signal cardClicked (variant card)
+    property bool enableMagnify: true
 
     function clear() {
         for (var i = cardContainer.children.length - 1; i >= 0; i--) {
@@ -16,9 +17,30 @@ Flickable {
         }
     }
 
+    function onCardPressAndHold(card) {
+        card.magnify(UI.MAGNIFY_KEEP_BOTTOM);
+    }
+
+    function onCardReleased(card) {
+        card.stopMagnify();
+    }
+
     function appendCard(suit, value) {
         var card = Game.createCard(cardContainer, suit, value);
         card.clicked.connect(cardClicked);
+        if (enableMagnify) {
+            card.pressAndHold.connect(onCardPressAndHold);
+            card.released.connect(onCardReleased);
+        }
+    }
+
+    // TODO: this looks stupid, but when Flickable is flicked, the cards no longer get released mouse event
+    onMovementStarted: {
+        if (enableMagnify) {
+            for (var i = cardContainer.children.length - 1; i >= 0; i--) {
+                cardContainer.children[i].stopMagnify();
+            }
+        }
     }
 
     Item {

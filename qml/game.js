@@ -8,6 +8,9 @@ var NOLO = 0;
 
 function createCard(parent, suit, value) {
     var component = Qt.createComponent("Card.qml");
+    if (component.status === Component.Error) {
+        console.log(component.errorString());
+    }
     var card = component.createObject(parent);
     if (card === null) {
         console.log("Error creating object");
