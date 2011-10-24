@@ -2,15 +2,13 @@ import QtQuick 1.0
 import "uiconstants.js" as UI
 
 Rectangle {
+    id: thisCard
     width: UI.CARD_WIDTH
     height: UI.CARD_HEIGHT
     color: "white"
     property int suit
     property int value
-    //property real origHeight: height
-    //property real origWidth: width
-    //property real origTextPixelSize: UI.CARD_FONTSIZE // cardText.pixelSize not available
-    property real origY: y
+    property real targetY
     property real magnifyFactor: 2.0
     signal clicked (variant card)
     signal pressAndHold (variant card)
@@ -21,9 +19,9 @@ Rectangle {
 
     function suitToChar(suit) {
         var suits = [{name: "spades", char: "\u2660"},
-                {name: "diamonds", char: "\u2666"},
-                {name: "clubs", char: "\u2663"},
-                {name: "hearts", char: "\u2665"}];
+                     {name: "diamonds", char: "\u2666"},
+                     {name: "clubs", char: "\u2663"},
+                     {name: "hearts", char: "\u2665"}];
         if (suits[suit] !== undefined) {
             return suits[suit].char;
         }
@@ -32,17 +30,17 @@ Rectangle {
 
     function valueToChar(value) {
         switch (value) {
-            case 11:
-                return "J";
-            case 12:
-                return "Q";
-            case 13:
-                return "K";
-            case 1: // fall through
-            case 14:
-                return "A";
-            default:
-                return (value + "");
+        case 11:
+            return "J";
+        case 12:
+            return "Q";
+        case 13:
+            return "K";
+        case 1: // fall through
+        case 14:
+            return "A";
+        default:
+            return (value + "");
         }
     }
 
@@ -52,49 +50,20 @@ Rectangle {
     }
 
     function magnify(mode) {
-//        origHeight = height;
-//        height *= magnifyFactor;
-          origY = y;
-//        // 0 or undefined => keep top
-//        if (mode === UI.MAGNIFY_KEEP_VCENTER) {
-//            y -= origHeight / 2;
-//        } else if (mode === UI.MAGNIFY_KEEP_BOTTOM) {
-//            y -= origHeight;
-//        }
-//        origWidth = width;
-//        width *= magnifyFactor;
-//        origTextPixelSize = cardText.font.pixelSize;
-//        cardText.font.pixelSize *= magnifyFactor;
-        scale *= magnifyFactor;
         if (mode === UI.MAGNIFY_KEEP_VCENTER) {
-            y -= height / 2 / magnifyFactor;
+            targetY = y - height / 2 / magnifyFactor;
         } else if (mode === UI.MAGNIFY_KEEP_BOTTOM) {
-            y -= height / magnifyFactor;
+            targetY = y - height / magnifyFactor;
         }
-
-        z += 1; // so that the card appears on top of its neighbors
+        state = "MAGNIFIED";
     }
 
     function stopMagnify() {
-        if (scale !== 1.0) {
-            scale = 1.0;
-            z -= 1; // should set this after animation
-        }
-        y = origY;
-//        height = origHeight;
-//        width = origWidth;
-//        cardText.font.pixelSize = origTextPixelSize;
+        state = "";
     }
 
     onSuitChanged: update()
     onValueChanged: update()
-
-    Behavior on scale {
-        NumberAnimation { easing.type: Easing.InQuart; duration: 200 }
-    }
-    Behavior on y {
-        NumberAnimation { easing.type: Easing.InQuart; duration: 200 }
-    }
 
     Text {
         id: cardText
@@ -120,4 +89,34 @@ Rectangle {
             }
         }
     }
+
+    states: [
+        State {
+            name: "MAGNIFIED"
+            PropertyChanges {
+                target: thisCard
+                explicit: true // copy, do not bind
+                y: targetY
+                z: z + 1 // increase z so that the magnified card is not covered by the next
+                scale: scale * magnifyFactor
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: "MAGNIFIED"; to: ""
+            SequentialAnimation {
+                NumberAnimation { properties: "scale,y"; easing.type: Easing.InQuart; duration: 200 }
+                PropertyAction { target: thisCard; property: "z" } // set z back to original after animation
+            }
+        },
+        Transition {
+            to: "MAGNIFIED"
+            SequentialAnimation {
+                PropertyAction { target: thisCard; property: "z" }
+                NumberAnimation { properties: "scale,y"; easing.type: Easing.InQuart; duration: 200 }
+            }
+        }
+    ]
 }
