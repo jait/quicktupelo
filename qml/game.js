@@ -174,7 +174,7 @@ function handleMessage(message) {
         if (message.success) {
             mainWindow.state = "REGISTERED";
             // go play straight away
-            worker.sendMessage({action: "quickStart"});
+            // worker.sendMessage({action: "quickStart"});
         } else {
             console.log("Register failed!");
             errorDialog.show("Could not sign on!");
@@ -186,11 +186,15 @@ function handleMessage(message) {
         }
         mainWindow.state = "";
         // TODO: wrap these behind a state change
+        gameListPage.model.clear();
         gameArea.clearAll();
         eventFetchTimer.stop();
         tableClearTimer.stop();
         statusRow.title = "";
-        mainWindow.pageStack.pop();
+        while (mainWindow.pageStack.depth > 1) {
+            mainWindow.pageStack.pop();
+            // for some reason after this the loginPage no longer responds
+        }
         break;
     case "startGame":
     case "startGameWithBots":
@@ -233,6 +237,13 @@ function handleMessage(message) {
             break;
         }
         onGameInfo(message.response, message.state);
+        break;
+    case "listGames":
+        if (! message.success) {
+            console.log("listGames failed!");
+            // TODO: better way to set gameListPage to error state?
+            //gameListPage.gameListTimer.stop();
+        }
         break;
     case "playCard":
         if (! message.success) {

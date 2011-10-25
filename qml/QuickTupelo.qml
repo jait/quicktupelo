@@ -69,6 +69,14 @@ PageStackWindow {
         // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
     }
 
+    GameListPage {
+        id: gameListPage
+        onQuickGame: {
+            worker.sendMessage({action: "quickStart"});
+            mainWindow.pageStack.push(gamePage);
+        }
+    }
+
     Page {
         id: gamePage
 
@@ -121,7 +129,7 @@ PageStackWindow {
                 title: ""
             }
             StateChangeScript {
-                script: mainWindow.pageStack.push(gamePage);
+                script: mainWindow.pageStack.push(gameListPage);
             }
         },
         State {

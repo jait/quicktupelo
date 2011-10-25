@@ -111,6 +111,30 @@ function getGameInfo() {
          }});
 }
 
+function listGames(model) {
+    ajax({uri: "/ajax/game/list",
+             action: "listGames",
+             success: function (response) {
+                          var game;
+                          //console.log("listGames: " + JSON.stringify(response));
+                          model.clear();
+                          for (var gameId in response) {
+                              if (response.hasOwnProperty(gameId)) {
+                                  game = {"gameId": gameId};
+                                  // generate a string with player names
+                                  try {
+                                      game.players = response[gameId].map(function (i) { return i.player_name; }).join(", ");
+                                  } catch (error) {
+                                      console.log("could not get players: " + error);
+                                  }
+                                  model.append(game);
+                              }
+                          }
+                          model.sync();
+                          //WorkerScript.sendMessage({action: "listGames", success: true, state:ME});
+                      }});
+}
+
 WorkerScript.onMessage = function (message) {
     console.log("onMessage " + JSON.stringify(message));
     switch (message.action) {
@@ -132,6 +156,9 @@ WorkerScript.onMessage = function (message) {
         break;
     case "getGameInfo":
         getGameInfo();
+        break;
+    case "listGames":
+        listGames(message.model);
         break;
     case "playCard":
         ajax({uri: "/ajax/game/play_card", data: {akey: ME.akey, game_id: ME.gameId,
