@@ -120,7 +120,8 @@ function listGames(model) {
                           model.clear();
                           for (var gameId in response) {
                               if (response.hasOwnProperty(gameId)) {
-                                  game = {"gameId": gameId};
+                                  // TODO: should get joinable from server
+                                  game = {"gameId": gameId, "joinable": response[gameId].length < 4 };
                                   // generate a string with player names
                                   try {
                                       game.players = response[gameId].map(function (i) { return i.player_name; }).join(", ");

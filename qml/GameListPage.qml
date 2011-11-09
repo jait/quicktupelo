@@ -15,7 +15,7 @@ Page {
         }
 
         ToolButton {
-            text: qsTr("Quick")
+            text: qsTr("Quick game")
             onClicked: quickGame()
         }
 
@@ -66,14 +66,15 @@ Page {
 
     ListModel {
         id: gameListModel
-
 //        ListElement {
 //            gameId: "a"
 //            players: "Esko, Arska, Jarska"
+//            joinable: true
 //        }
 //        ListElement {
 //            gameId: "b"
 //            players: "Eski, Arski, Jarski"
+//            joinable: true
 //        }
 
     }
@@ -83,22 +84,30 @@ Page {
         anchors.right: parent.right
         anchors.top: pageHeader.bottom
         anchors.bottom: parent.bottom
+        anchors.leftMargin: UI.DEFAULT_MARGIN
         ListView {
             id: gameListView
             visible: gameListModel.count > 0
             anchors.fill: parent
             model: gameListModel
+            property color listTitleColor: theme.inverted ? UI.LIST_TITLE_COLOR_INVERTED : UI.LIST_TITLE_COLOR
             delegate: Item {
                 width: parent.width
-                height: gameLabel.paintedHeight + UI.DEFAULT_MARGIN
+                //height: gameLabel.paintedHeight + UI.DEFAULT_MARGIN
+                height: gameLabel.paintedHeight + UI.DEFAULT_MARGIN > 64 ? gameLabel.paintedHeight + UI.DEFAULT_MARGIN: 64
+
                 Label {
                     id: gameLabel
                     anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
                     text: model.players
-                    font.pixelSize: UI.FONT_DEFAULT
+                    font.pixelSize: UI.FONT_SLARGE
+                    font.weight: Font.Bold
+                    color: joinable ? gameListView.listTitleColor : "gray"
                 }
                 MouseArea {
                     anchors.fill: parent
+                    visible: model.joinable
                     onClicked: {
                         console.log("game " + model.gameId + " clicked");
                         joinDialog.open();
