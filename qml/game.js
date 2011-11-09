@@ -241,9 +241,8 @@ function handleMessage(message) {
     case "listGames":
         if (! message.success) {
             console.log("listGames failed!");
-            // TODO: better way to set gameListPage to error state?
-            //gameListPage.gameListTimer.stop();
         }
+        gameListPage.listGamesCompleted(message);
         break;
     case "playCard":
         if (! message.success) {
@@ -256,6 +255,7 @@ function handleMessage(message) {
         }
         worker.sendMessage({action: "getGameState"});
         eventFetchTimer.triggerNow();
+
         break;
     default:
         console.log("Unsupported action " + message.action);

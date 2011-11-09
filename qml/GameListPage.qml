@@ -6,6 +6,7 @@ Page {
     signal gameCreated
     signal gameJoined
     signal quickGame
+    signal listGamesCompleted (variant message)
     property alias model: gameListModel
 
     tools: ToolBarLayout {
@@ -29,6 +30,17 @@ Page {
         id: gameListTimer
         interval: 4000; running: status === PageStatus.Active; repeat: true; triggeredOnStart: true
         onTriggered: { worker.sendMessage({action: "listGames", model: gameListModel}) }
+    }
+
+    onListGamesCompleted: {
+        if (! message.success) {
+            console.log("listGames failed!");
+            gameListTimer.stop();
+        } else {
+            if (gameListModel.updated !== true) {
+                gameListModel.updated = true;
+            }
+        }
     }
 
     QueryDialog {
@@ -66,6 +78,7 @@ Page {
 
     ListModel {
         id: gameListModel
+        property bool updated: false
 //        ListElement {
 //            gameId: "a"
 //            players: "Esko, Arska, Jarska"
@@ -103,7 +116,7 @@ Page {
                     text: model.players
                     font.pixelSize: UI.FONT_SLARGE
                     font.weight: Font.Bold
-                    color: joinable ? gameListView.listTitleColor : "gray"
+                    color: model.joinable ? gameListView.listTitleColor : "gray"
                 }
                 MouseArea {
                     anchors.fill: parent
@@ -124,7 +137,7 @@ Page {
             // TODO: correct platform style?
             font.pixelSize: UI.FONT_XLARGE
             color: "gray"
-            visible: gameListModel.count === 0
+            visible: gameListModel.updated && gameListModel.count === 0
         }
     }
 

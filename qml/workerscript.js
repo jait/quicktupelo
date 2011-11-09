@@ -1,4 +1,4 @@
-var CONFIG = {server: "http://localhost"};
+var CONFIG = {server: "http://localhost:8052"};
 var ME = {id: undefined, akey: undefined};
 
 function ajax(params) {
@@ -132,7 +132,7 @@ function listGames(model) {
                               }
                           }
                           model.sync();
-                          //WorkerScript.sendMessage({action: "listGames", success: true, state:ME});
+                          WorkerScript.sendMessage({action: "listGames", success: true});
                       }});
 }
 
