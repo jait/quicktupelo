@@ -1,14 +1,14 @@
-Source: quicktupelo
+Source: tupelo-qml
 Section: user/other
 Priority: optional
-Maintainer: unknown <jari@unknown>
+Maintainer: Jari Tenhunen <jari.tenhunen@iki.fi>
 Build-Depends: debhelper (>= 5), libqt4-dev
 Standards-Version: 3.7.3
 Homepage: <insert the upstream URL, if relevant>
 
-Package: quicktupelo
+Package: tupelo-qml
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
-XSBC-Maemo-Display-Name: QuickTupelo
+XSBC-Maemo-Display-Name: Tupelo
