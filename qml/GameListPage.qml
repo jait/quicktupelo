@@ -72,7 +72,7 @@ Page {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: UI.DEFAULT_MARGIN
-            visible: running
+            visible: gameListModel.updated === false
         }
     }
 

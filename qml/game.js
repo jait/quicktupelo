@@ -187,6 +187,7 @@ function handleMessage(message) {
         mainWindow.state = "";
         // TODO: wrap these behind a state change
         gameListPage.model.clear();
+        gameListPage.model.updated = false;
         gameArea.clearAll();
         eventFetchTimer.stop();
         tableClearTimer.stop();
