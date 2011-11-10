@@ -8,6 +8,15 @@ Page {
 
     PageHeader {
         title: "Tupelo"
+
+        BusyIndicator {
+            id: busyIndicator
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: UI.DEFAULT_MARGIN
+            visible: running
+            running: false
+        }
     }
 
     TextField {
@@ -30,6 +39,25 @@ Page {
                 loginClicked(nameInput.text);
             }
         }
-        // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
     }
+
+    MouseArea {
+        id: eventEater
+        anchors.fill: parent
+        visible: false
+    }
+
+    states: [
+        State {
+            name: "REGISTERING"
+            PropertyChanges {
+                target: busyIndicator
+                running: true
+            }
+            PropertyChanges {
+                target: eventEater
+                visible: true
+            }
+        }
+    ]
 }

@@ -176,6 +176,7 @@ function handleMessage(message) {
             // go play straight away
             // worker.sendMessage({action: "quickStart"});
         } else {
+            mainWindow.state = "";
             console.log("Register failed!");
             errorDialog.show("Could not sign on!");
         }

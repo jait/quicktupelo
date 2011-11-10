@@ -65,8 +65,11 @@ PageStackWindow {
 
     LoginPage {
         id: loginPage
-        onLoginClicked: worker.sendMessage({action: "register", playerName: playerName})
-        // TODO: need a REGISTERING state to disable the UI fields and show a spinner/something
+        onLoginClicked: {
+            mainWindow.state = "REGISTERING";
+            worker.sendMessage({action: "register", playerName: playerName});
+            // TODO: there should be a sensible timeout for the operation
+        }
     }
 
     GameListPage {
@@ -122,6 +125,13 @@ PageStackWindow {
     //Component.onCompleted: theme.inverted = true
 
     states: [
+        State {
+            name: "REGISTERING"
+            PropertyChanges {
+                target: loginPage
+                state: "REGISTERING"
+            }
+        },
         State {
             name: "REGISTERED"
             PropertyChanges {
