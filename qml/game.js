@@ -189,10 +189,7 @@ function handleMessage(message) {
         gameListPage.model.clear();
         gameListPage.model.updated = false;
         eventFetchTimer.stop();
-        while (mainWindow.pageStack.depth > 1) {
-            mainWindow.pageStack.pop();
-            // for some reason after this the loginPage no longer responds
-        }
+        mainWindow.pageStack.pop(loginPage);
         break;
     case "leaveGame":
         if (! message.success) {
