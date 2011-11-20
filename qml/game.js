@@ -172,9 +172,8 @@ function handleMessage(message) {
     switch (message.action) {
     case "register":
         if (message.success) {
+            mainWindow.pageStack.push(gameListPage);
             mainWindow.state = "REGISTERED";
-            // go play straight away
-            // worker.sendMessage({action: "quickStart"});
         } else {
             mainWindow.state = "";
             console.log("Register failed!");
@@ -189,13 +188,19 @@ function handleMessage(message) {
         // TODO: wrap these behind a state change
         gameListPage.model.clear();
         gameListPage.model.updated = false;
-        gameArea.clearAll();
         eventFetchTimer.stop();
-        tableClearTimer.stop();
-        statusRow.title = "";
         while (mainWindow.pageStack.depth > 1) {
             mainWindow.pageStack.pop();
             // for some reason after this the loginPage no longer responds
+        }
+        break;
+    case "leaveGame":
+        if (! message.success) {
+            console.log("leaveGame failed!");
+        }
+        if (mainWindow.state === "IN_GAME") {
+            mainWindow.pageStack.pop();
+            mainWindow.state = "REGISTERED";
         }
         break;
     case "startGame":

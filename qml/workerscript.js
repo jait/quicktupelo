@@ -145,6 +145,19 @@ WorkerScript.onMessage = function (message) {
     case "quit":
         quit();
         break;
+    case "leaveGame":
+        ajax({uri: "/ajax/game/leave", data: {akey: ME.akey, game_id: ME.gameId},
+                 action: message.action,
+                 success: function (json) {
+                              ME.gameID = undefined;
+                              WorkerScript.sendMessage({action: message.action, success: true, response: json});
+                          },
+                 error: function (doc, json) {
+                            ME.gameID = undefined;
+                            WorkerScript.sendMessage({action: message.action, success: false, response: json});
+                        }
+             });
+        break;
     case "quickStart":
         createGame(startGameWithBots);
         break;

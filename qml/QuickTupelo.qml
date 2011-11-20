@@ -84,8 +84,13 @@ PageStackWindow {
         id: gamePage
 
         tools: ToolBarLayout {
+            ToolIcon {
+                platformIconId: "toolbar-back"
+                onClicked: leaveDialog.open()
+            }
+
             ToolButton {
-                anchors.centerIn: parent
+                //anchors.centerIn: parent
                 text: qsTr("Sign off")
                 onClicked: quitDialog.open()
             }
@@ -120,6 +125,23 @@ PageStackWindow {
             rejectButtonText: qsTr("No")
             onAccepted: worker.sendMessage({action: "quit"})
         }
+
+        QueryDialog {
+            id: leaveDialog
+            titleText: qsTr("Leave game?")
+            message: qsTr("Leaving the ongoing game will end the game for other players as well.")
+            acceptButtonText: qsTr("Yes")
+            rejectButtonText: qsTr("No")
+            onAccepted: worker.sendMessage({action: "leaveGame"})
+        }
+
+        onStatusChanged: {
+            if (status === PageStatus.Inactive) {
+                gameArea.clearAll();
+                tableClearTimer.stop();
+                statusRow.title = "";
+            }
+        }
     }
 
     //Component.onCompleted: theme.inverted = true
@@ -137,9 +159,6 @@ PageStackWindow {
             PropertyChanges {
                 target: statusRow
                 title: ""
-            }
-            StateChangeScript {
-                script: mainWindow.pageStack.push(gameListPage);
             }
         },
         State {
