@@ -66,7 +66,6 @@ Page {
         title: "List of games"
         z: 1
 
-        // TODO: make busyindicator run only on the first refresh
         BusyIndicator {
             id: busyIndicator
             anchors.verticalCenter: parent.verticalCenter
@@ -89,7 +88,6 @@ Page {
 //            players: "Eski, Arski, Jarski"
 //            joinable: true
 //        }
-
     }
 
     Item {
@@ -140,6 +138,4 @@ Page {
             visible: gameListModel.updated && gameListModel.count === 0
         }
     }
-
-
 }

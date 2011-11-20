@@ -90,7 +90,7 @@ PageStackWindow {
             }
 
             ToolButton {
-                //anchors.centerIn: parent
+                anchors.centerIn: parent
                 text: qsTr("Sign off")
                 onClicked: quitDialog.open()
             }
