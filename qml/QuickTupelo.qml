@@ -7,6 +7,7 @@ PageStackWindow {
     id: mainWindow
     initialPage: loginPage
     showToolBar: true
+    property alias gameArea: gamePage.gameArea
 
     WorkerScript {
         id: worker
@@ -80,68 +81,8 @@ PageStackWindow {
         }
     }
 
-    Page {
+    GamePage {
         id: gamePage
-
-        tools: ToolBarLayout {
-            ToolIcon {
-                platformIconId: "toolbar-back"
-                onClicked: leaveDialog.open()
-            }
-
-            ToolButton {
-                anchors.centerIn: parent
-                text: qsTr("Sign off")
-                onClicked: quitDialog.open()
-            }
-        }
-
-        Column {
-            anchors.fill: parent
-            spacing: 10
-
-            PageHeader {
-                id: statusRow
-            }
-
-            GameArea {
-                id: gameArea
-                height: parent.height - statusRow.height - parent.spacing
-                Component.onCompleted: cardClicked.connect(Game.onCardClicked)
-                onTableClicked: {
-                    if (tableClearTimer.running) {
-                        tableClearTimer.stop()
-                        gameArea.clearTable()
-                        eventProcessTimer.start()
-                    }
-                }
-            }
-        }
-        QueryDialog {
-            id: quitDialog
-            titleText: qsTr("Sign off?")
-            message: qsTr("Leaving the ongoing game will end the game for other players as well.")
-            acceptButtonText: qsTr("Yes")
-            rejectButtonText: qsTr("No")
-            onAccepted: worker.sendMessage({action: "quit"})
-        }
-
-        QueryDialog {
-            id: leaveDialog
-            titleText: qsTr("Leave game?")
-            message: qsTr("Leaving the ongoing game will end the game for other players as well.")
-            acceptButtonText: qsTr("Yes")
-            rejectButtonText: qsTr("No")
-            onAccepted: worker.sendMessage({action: "leaveGame"})
-        }
-
-        onStatusChanged: {
-            if (status === PageStatus.Inactive) {
-                gameArea.clearAll();
-                tableClearTimer.stop();
-                statusRow.title = "";
-            }
-        }
     }
 
     //Component.onCompleted: theme.inverted = true
@@ -157,8 +98,8 @@ PageStackWindow {
         State {
             name: "REGISTERED"
             PropertyChanges {
-                target: statusRow
-                title: ""
+                target: gamePage
+                statusText: ""
             }
         },
         State {

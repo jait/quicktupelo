@@ -60,14 +60,11 @@ function onStateChanged(event) {
     }
     if (stateStr) {
         console.log(stateStr);
-        statusRow.title = stateStr;
+        gamePage.statusText = stateStr;
     }
 }
 
-function onCardClicked(card) {
-    worker.sendMessage({"action": "playCard",
-                         "card": {"suit": card.suit, "value": card.value}});
-}
+
 
 function processEvent() {
     var event;
