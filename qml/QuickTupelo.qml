@@ -106,10 +106,6 @@ PageStackWindow {
 
     GameListPage {
         id: gameListPage
-        onQuickGame: {
-            worker.sendMessage({action: "quickStart"});
-            mainWindow.pageStack.push(gamePage);
-        }
     }
 
     GamePage {

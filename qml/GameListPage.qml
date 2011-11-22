@@ -43,6 +43,11 @@ Page {
         }
     }
 
+    onQuickGame: {
+        worker.sendMessage({action: "quickStart"});
+        state = "JOINING";
+    }
+
     QueryDialog {
         id: quitDialog
         titleText: qsTr("Sign off?")
@@ -71,7 +76,8 @@ Page {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: UI.DEFAULT_MARGIN
-            visible: gameListModel.updated === false
+            visible: running
+            running: false
         }
     }
 
@@ -88,6 +94,12 @@ Page {
 //            players: "Eski, Arski, Jarski"
 //            joinable: true
 //        }
+    }
+
+    // QTBUG-19763
+    Connections {
+        target: gameListModel
+        onUpdatedChanged: if (gameListModel.updated) { busyIndicator.running = false; }
     }
 
     Item {
@@ -138,4 +150,26 @@ Page {
             visible: gameListModel.updated && gameListModel.count === 0
         }
     }
+
+    MouseArea {
+        id: eventEater
+        anchors.fill: parent
+        visible: false
+    }
+
+    states: [
+        State {
+            name: "JOINING"
+            PropertyChanges {
+                target: busyIndicator
+                running: true
+            }
+            PropertyChanges {
+                target: eventEater
+                visible: true
+            }
+        }
+    ]
+
+    Component.onCompleted: busyIndicator.running = (gameListModel.updated === false)
 }

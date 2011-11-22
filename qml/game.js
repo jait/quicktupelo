@@ -116,6 +116,10 @@ function handleMessage(message) {
             console.log("startGame failed!");
             break;
         }
+        if (mainWindow.pageStack.currentPage !== gamePage) {
+            mainWindow.pageStack.push(gamePage);
+        }
+        gameListPage.state = "";
         mainWindow.state = "IN_GAME";
         worker.sendMessage({action: "getGameInfo"});
         worker.sendMessage({action: "getGameState"});
