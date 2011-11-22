@@ -1,6 +1,4 @@
 
-var EVENTS = [];
-
 var RULE_ERROR = 2;
 var STATE_VOTING = 1;
 var STATE_ONGOING = 2;
@@ -20,90 +18,6 @@ function createCard(parent, suit, value) {
     card.suit = suit;
     card.value = value;
     return card;
-}
-
-function clearTable() {
-    // stop processing events and schedule timer for table clearing
-    eventProcessTimer.stop();
-    tableClearTimer.start();
-}
-
-function onCardPlayed(event) {
-    var plr;
-    plr = getPlayerElemById(event.player.id);
-    if (plr === undefined) {
-        console.log("Could not find player!");
-        return;
-    }
-    createCard(plr.card, event.card.suit, event.card.value);
-}
-
-function onMessageReceived(event) {
-    console.log(JSON.stringify(event));
-}
-
-function onTrickPlayed(event) {
-    clearTable();
-}
-
-function onTurnEvent(event) {
-    // TODO: highlight the player in turn
-}
-
-function onStateChanged(event) {
-    var stateStr = undefined;
-    if (event.game_state.state == STATE_VOTING) {
-        stateStr = "Voting";
-    } else if (event.game_state.state == STATE_ONGOING) { // VOTING => ONGOING
-        clearTable();
-        stateStr = event.game_state.mode == NOLO ? "Playing NOLO": "Playing RAMI";
-    }
-    if (stateStr) {
-        console.log(stateStr);
-        gamePage.statusText = stateStr;
-    }
-}
-
-
-
-function processEvent() {
-    var event;
-    if (EVENTS.length === 0) {
-        console.log("no events to process");
-        return;
-    }
-    event = EVENTS.shift();
-    console.log("processing " + event);
-
-    if (event.game_state !== undefined) {
-        //updateGameState(event.game_state);
-    }
-    switch (event.type) {
-        case 1:
-            onCardPlayed(event);
-            break;
-        case 2:
-            onMessageReceived(event);
-            break;
-        case 3:
-            onTrickPlayed(event);
-            break;
-        case 4:
-            onTurnEvent(event);
-            break;
-        case 5:
-            onStateChanged(event);
-            break;
-        default:
-            console.log("unknown event " + event.type);
-            break;
-    }
-
-    return (EVENTS.length > 0);
-}
-
-function queueEvent(event) {
-    EVENTS.push(event);
 }
 
 function updateHand(newHand) {
@@ -162,7 +76,6 @@ function onGameInfo(result, state) {
     }
 }
 
-
 function handleMessage(message) {
     var i;
     //console.log("handling message");
@@ -216,10 +129,13 @@ function handleMessage(message) {
         // add events to queue
         if (message.response.length > 0) {
             for (i = 0; i < message.response.length; i++) {
-                queueEvent(message.response[i]);
+                // TODO: how about queueEvents()?
+                eventQueue.queueEvent(message.response[i]);
             }
-            // kick the timer if it's not running
-            eventProcessTimer.maybeStart();
+            // kick the event queue if it's not running
+            if (! tableClearTimer.running) {
+                eventQueue.start();
+            }
         }
         break;
     case "getGameState":

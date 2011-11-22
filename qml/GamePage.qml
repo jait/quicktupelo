@@ -38,9 +38,9 @@ Page {
             Component.onCompleted: cardClicked.connect(gamePage.onCardClicked)
             onTableClicked: {
                 if (tableClearTimer.running) {
-                    tableClearTimer.stop()
-                    gameArea.clearTable()
-                    eventProcessTimer.start()
+                    tableClearTimer.stop();
+                    gameArea.clearTable();
+                    eventQueue.start();
                 }
             }
         }

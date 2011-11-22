@@ -15,6 +15,52 @@ PageStackWindow {
         onMessage: { Game.handleMessage(messageObject) }
     }
 
+    EventQueue {
+        id: eventQueue
+
+        function scheduleClearTable() {
+            // stop processing events and schedule timer for table clearing
+            eventQueue.stop();
+            tableClearTimer.start();
+        }
+
+        onCardPlayed: {
+            var plr;
+            plr = Game.getPlayerElemById(event.player.id);
+            if (plr === undefined) {
+                console.log("Could not find player!");
+                return;
+            }
+            Game.createCard(plr.card, event.card.suit, event.card.value);
+        }
+
+        onMessageReceived: {
+            console.log(JSON.stringify(event));
+        }
+
+        onTrickPlayed: {
+            scheduleClearTable();
+        }
+
+        onTurnEvent: {
+            // TODO: highlight the player in turn
+        }
+
+        onStateChanged: {
+            var stateStr = undefined;
+            if (event.game_state.state == Game.STATE_VOTING) {
+                stateStr = "Voting";
+            } else if (event.game_state.state == Game.STATE_ONGOING) { // VOTING => ONGOING
+                scheduleClearTable();
+                stateStr = event.game_state.mode == Game.NOLO ? "Playing NOLO": "Playing RAMI";
+            }
+            if (stateStr) {
+                console.log(stateStr);
+                gamePage.statusText = stateStr;
+            }
+        }
+    }
+
     Timer {
         id: eventFetchTimer
         interval: 2000; running: false; repeat: true
@@ -33,26 +79,11 @@ PageStackWindow {
     }
 
     Timer {
-        id: eventProcessTimer
-        interval: 100; running: false; repeat: true
-        onTriggered: {
-            if (! Game.processEvent()) {
-                eventProcessTimer.stop()
-            }
-        }
-        function maybeStart() {
-            if (! tableClearTimer.running) {
-                eventProcessTimer.start();
-            }
-        }
-    }
-
-    Timer {
         id: tableClearTimer
         interval: 5000; running: false; repeat: false
         onTriggered: {
             gameArea.clearTable()
-            eventProcessTimer.start()
+            eventQueue.start();
         }
     }
 
