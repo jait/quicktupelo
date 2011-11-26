@@ -89,7 +89,8 @@ Page {
         id: pageHeader
         title: showAllGames ? qsTr("All games") : qsTr("Joinable games")
         z: 1
-        pressed: mouseArea.pressed && mouseArea.containsMouse
+        clickable: true
+        onClicked: filterSelection.open()
 
         BusyIndicator {
             id: busyIndicator
@@ -106,12 +107,6 @@ Page {
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.rightMargin: UI.DEFAULT_MARGIN
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            onClicked: filterSelection.open()
         }
     }
 
