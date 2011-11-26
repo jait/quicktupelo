@@ -111,7 +111,7 @@ function getGameInfo() {
          }});
 }
 
-function listGames(model) {
+function listGames(model, listAll) {
     ajax({uri: "/ajax/game/list",
              action: "listGames",
              success: function (response) {
@@ -128,7 +128,9 @@ function listGames(model) {
                                   } catch (error) {
                                       console.log("could not get players: " + error);
                                   }
-                                  model.append(game);
+                                  if (listAll || game.joinable) {
+                                      model.append(game);
+                                  }
                               }
                           }
                           model.sync();
@@ -172,7 +174,7 @@ WorkerScript.onMessage = function (message) {
         getGameInfo();
         break;
     case "listGames":
-        listGames(message.model);
+        listGames(message.model, message.listAll);
         break;
     case "playCard":
         ajax({uri: "/ajax/game/play_card", data: {akey: ME.akey, game_id: ME.gameId,

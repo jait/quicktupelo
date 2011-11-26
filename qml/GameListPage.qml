@@ -8,6 +8,7 @@ Page {
     signal quickGame
     signal listGamesCompleted (variant message)
     property alias model: gameListModel
+    property bool showAllGames: true
 
     tools: ToolBarLayout {
         ToolIcon {
@@ -29,7 +30,7 @@ Page {
     Timer {
         id: gameListTimer
         interval: 4000; running: status === PageStatus.Active; repeat: true; triggeredOnStart: true
-        onTriggered: { worker.sendMessage({action: "listGames", model: gameListModel}) }
+        onTriggered: { worker.sendMessage({action: "listGames", model: gameListModel, listAll: showAllGames}) }
     }
 
     onListGamesCompleted: {
@@ -43,6 +44,7 @@ Page {
         }
     }
 
+    onShowAllGamesChanged: worker.sendMessage({action: "listGames", model: gameListModel, listAll: showAllGames})
     onQuickGame: {
         worker.sendMessage({action: "quickStart"});
         state = "JOINING";
@@ -66,18 +68,50 @@ Page {
         onAccepted: console.log("Not implemented!")
     }
 
+    SelectionDialog {
+        id: filterSelection
+        titleText: qsTr("Show")
+        model: ListModel {
+            ListElement {
+                name: "All games" // Uh-oh. Cannot use qsTr() here
+            }
+            ListElement {
+                name: "Joinable games"
+            }
+        }
+        onAccepted: {
+            console.log("selected: " + selectedIndex);
+            showAllGames = (selectedIndex === 0);
+        }
+    }
+
     PageHeader {
         id: pageHeader
-        title: "List of games"
+        title: showAllGames ? qsTr("All games") : qsTr("Joinable games")
         z: 1
+        pressed: mouseArea.pressed && mouseArea.containsMouse
 
         BusyIndicator {
             id: busyIndicator
             anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
+            anchors.right: arrow.left
             anchors.rightMargin: UI.DEFAULT_MARGIN
             visible: running
             running: false
+        }
+
+        Image {
+            id: arrow
+            source: "image://theme/icon-m-textinput-combobox-arrow"
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: UI.DEFAULT_MARGIN
+        }
+
+        MouseArea {
+            id: mouseArea
+            anchors.fill: parent
+            onClicked: filterSelection.open()
         }
     }
 
