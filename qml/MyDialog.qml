@@ -1,4 +1,5 @@
 import QtQuick 1.0
+import "uiconstants.js" as UI
 
 Rectangle {
     id: dialog
@@ -7,7 +8,6 @@ Rectangle {
 
     signal opened
     signal closed
-
 
     function show(text) {
         dialog.opened();
@@ -49,7 +49,12 @@ Rectangle {
         }
     }
 
-    Text { id: dialogText; anchors.centerIn: parent; text: "Hello!" }
+    Text {
+        id: dialogText
+        anchors.centerIn: parent
+        text: "Hello!"
+        font.pixelSize: UI.FONT_DEFAULT
+    }
 
     MouseArea { anchors.fill: parent; onClicked: forceClose(); }
 }
