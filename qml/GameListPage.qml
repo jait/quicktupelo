@@ -72,11 +72,16 @@ Page {
         id: filterSelection
         titleText: qsTr("Show")
         model: ListModel {
+            id: filterSelectionModel
             ListElement {
-                name: "All games" // Uh-oh. Cannot use qsTr() here
+                name: QT_TR_NOOP("All games") // Uh-oh. Cannot use qsTr() here
             }
             ListElement {
-                name: "Joinable games"
+                name: QT_TR_NOOP("Joinable games")
+            }
+            Component.onCompleted: {
+                filterSelectionModel.setProperty(0, "name", qsTr("All games"))
+                filterSelectionModel.setProperty(1, "name", qsTr("Joinable games"))
             }
         }
         onAccepted: {
