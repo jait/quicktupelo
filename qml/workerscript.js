@@ -26,7 +26,7 @@ function ajax(params) {
             console.log("DONE " + doc.status);
             console.log(doc.responseText);
             if (doc.status == 200) {
-                json = eval("(" + doc.responseText + ")");
+                json = JSON.parse(doc.responseText);
                 if (params.success !== undefined) {
                     params.success(json);
                 }
